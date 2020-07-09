@@ -1,0 +1,37 @@
+{
+  "name": "simple-predictions-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "mocha --reporter list --timeout 10000 --exit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sol-austin/simple-predictions-api.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sol-austin/simple-predictions-api/issues"
+  },
+  "homepage": "https://github.com/sol-austin/simple-predictions-api#readme",
+  "dependencies": {
+    "@sentry/node": "^5.17.0",
+    "bunyan": "^1.8.12",
+    "chai": "^4.2.0",
+    "chai-http": "^4.3.0",
+    "cors": "^2.8.5",
+    "cron": "^1.8.2",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "logdna": "^3.5.0",
+    "logdna-bunyan": "^1.3.1",
+    "mongodb": "^3.5.8",
+    "raygun": "^0.11.1",
+    "twit": "^2.2.11"
+  },
+  "devDependencies": {
+    "mocha": "^8.0.1"
+  }
+}
