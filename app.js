@@ -1,4 +1,4 @@
-const env = require('dotenv').config()['parsed'] || process.env;
+const env = require('dotenv').config()['parsed'] || process.env
 
 const Sentry = require('@sentry/node');
 const environment = process.env.NODE_ENV || 'development';
