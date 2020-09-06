@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/sol-austin/simple-predictions-api#readme",
   "dependencies": {
+    "@babel/node": "^7.10.5",
     "@sentry/node": "^5.17.0",
     "bunyan": "^1.8.12",
     "chai": "^4.2.0",
