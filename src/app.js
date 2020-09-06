@@ -15,10 +15,7 @@ const https = require('https');
 const Twit = require('twit');
 
 // Export for testing
-exports.server = express
-
 const scoring = require('./scoring.js');
-const live_scoring = require('./scoring/live.js')
 
 exports.https = https;
 
@@ -449,63 +446,9 @@ function getMiniLeagueTable() {
   });
 }
 
-express.get('/minileague',async (req,res) => {
-  var json = await getMiniLeagueTable();
-  res.json(json);
-})
-
-// Premier League API Routing
-express.get('/premierleague/:path*', (req,res) => {
-  var url = req.url;
-  url = url.substring(14)
-  const options = {
-    hostname: 'footballapi.pulselive.com',
-    port: 443,
-    path: url,
-    method: 'GET',
-    headers: {
-      'Origin': 'https://www.premierleague.com'
-    }
-  }
-
-  https.get(options, (response) => {
-    var data = ''
-
-    response.on('data', (d) => {
-      data+=d
-      console.log(d)
-    })
-
-    response.on('end', () => {
-      if (response.statusCode == 200){
-        res.json(JSON.parse(data))
-      } else {
-        console.log('Premier league request failed')
-        res.json()
-      }
-    })
-  }).on('error', (e) => {
-    console.log(e)
-  })
-})
 
 // TEST ROUTE
 
-express.get('/testroute',(req,res) => {
-  //var tweet = scoring.scoreGames();
-  //var tweet = updateFootballDataScores();
-  //var tweet = updateLiveScores();
-  //var tweet = updateFixturesAndPredictions(25);
-  console.info('testroute path called')
-  var tweet = getData();
-  res.json(tweet);
-})
-
-// Throw Error Route
-express.get('/throwerror',(req,res) => {
-  Sentry.captureException('test error')
-  res.json('');
-})
 
 // TIMING SECTION
 var CronJob = require('cron').CronJob;
