@@ -1,4 +1,5 @@
-express.get('/data',async (req,res) => {
+exports.generic = (express) => {
+  express.get('/data',async (req,res) => {
     var json = await getData();
     logger.info('Get data path called')
     res.json(json)
@@ -9,3 +10,4 @@ express.get('/data',async (req,res) => {
     table.deleteMany({}, {$multi: true})
     res.json()
   })
+}

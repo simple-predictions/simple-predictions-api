@@ -1,7 +1,9 @@
-express.get('/updatepredictions',(req,res) => {
-  getTalkSportWeekNum().then((weeknum) => {
-    updateFixturesAndPredictions(weeknum);
-  });
-  logger.info('Update predictions called')
-  res.json();
-})
+exports.predictions = (express) => {
+  express.get('/updatepredictions',(req,res) => {
+    getTalkSportWeekNum().then((weeknum) => {
+      updateFixturesAndPredictions(weeknum);
+    });
+    logger.info('Update predictions called')
+    res.json();
+  })
+}

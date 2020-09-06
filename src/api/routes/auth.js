@@ -1,4 +1,3 @@
-const Router = require('express')
 const new_bearer = require('../../services/auth').new_bearer
 
 exports.auth = (express) => {
