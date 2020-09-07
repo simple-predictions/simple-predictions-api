@@ -1,9 +1,7 @@
 exports.predictions = (express) => {
-  express.get('/updatepredictions',(req,res) => {
-    getTalkSportWeekNum().then((weeknum) => {
-      updateFixturesAndPredictions(weeknum);
-    });
-    logger.info('Update predictions called')
+  express.get('/updateprediction', (req,res) => {
+    const username = req.session.passport.user
+    
     res.json();
   })
 }
