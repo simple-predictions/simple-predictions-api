@@ -10,7 +10,7 @@ var T = new Twit({
   timeout_ms:           60*1000,  // optional HTTP request timeout to apply to all requests.
 })
 
-exports.updateLiveScores = () => {
+exports.updateLiveScores = async () => {
   await scoring.scoreGames()
   // Get request used rather than streaming because it can be filtered by account (more narrowly)
   T.get('statuses/user_timeline', { user_id: 343627165, count: 50 }).then(async function(result) {

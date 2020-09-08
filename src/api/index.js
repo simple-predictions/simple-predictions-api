@@ -5,6 +5,7 @@ const jobs = require('./routes/jobs').jobs
 const predictions = require('./routes/predictions').predictions
 const score = require('./routes/score').score
 const games = require('./routes/games').games
+const minileague = require('./routes/minileague').minileague
 const bodyParser = require('body-parser');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
@@ -36,6 +37,7 @@ exports.routes = () => {
 	predictions(app);
 	score(app);
 	games(app);
+	minileague(app);
 
 	return app
 }
