@@ -2,11 +2,6 @@ const generateTwoHoursScoreCheckingCron = require('./startMatch').startMatch
 const Match = require('../models/user').match
 
 exports.init = async (agendaInstance) => {
-  agendaInstance.define('game start job', (agendaInstance) => {
-    console.info('game start cron job running')
-    generateTwoHoursScoreCheckingCron(agendaInstance);
-  })
-
   console.info('replacing cron jobs')
   var jobs_arr = [];
   var times_arr = [];
@@ -28,7 +23,11 @@ exports.init = async (agendaInstance) => {
     var hours = datetime.getHours();
     var date = datetime.getDate();
     var month = datetime.getMonth();
-    var job = agendaInstance.every(minutes+' '+hours+' '+date+' '+month+' *', 'game start job')
+    agendaInstance.define('game start job '+time, (agendaInstance) => {
+      console.info('game start cron job running')
+      generateTwoHoursScoreCheckingCron(agendaInstance);
+    })
+    var job = agendaInstance.every(minutes+' '+hours+' '+date+' '+month+' *', 'game start job '+time)
     //jobs_arr.push(job)
   }
   /*
