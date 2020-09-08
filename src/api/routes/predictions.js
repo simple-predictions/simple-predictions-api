@@ -19,7 +19,15 @@ exports.predictions = (express) => {
   })
 
   express.get('/getuserpredictions', (req, res) => {
-    getUserPredictions()
+    if (!req.session.passport) {
+      res.status(401)
+      res.json()
+      return
+    }
+    const username = req.session.passport.user
+    const gameweek = req.body.gameweek || null
+
+    getUserPredictions(username, gameweek)
     res.json()
   })
 }
