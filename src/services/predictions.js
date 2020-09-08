@@ -40,41 +40,43 @@ exports.updatePrediction = (username, home_pred, away_pred, game_id) => {
   })
 }
 
-exports.getUserPredictions = (username, gameweek) => {
-  var gameweek_num = gameweek || getGameweek()
-  gameweek_num = 1
+exports.getUserPredictions = async (username, gameweek) => {
+  return await new Promise((resolve) => {
+    var gameweek_num = gameweek || getGameweek()
+    gameweek_num = 1
 
-  Match.find({gameweek: gameweek_num}).populate({
-    path: 'predictions',
-    populate: { path: 'author' }
-  }).exec(function (err, res) {
-    var final_preds_arr = []
+    Match.find({gameweek: gameweek_num}).populate({
+      path: 'predictions',
+      populate: { path: 'author' }
+    }).exec(function (err, res) {
+      var final_preds_arr = []
 
-    if (err) throw err;
-    for (var i = 0; i < res.length; i++) {
-      var match = res[i]
-      var predictions = match['predictions']
-      var match_obj = {
-        home_team: match['home_team'],
-        away_team: match['away_team'],
-        gameweek: match['gameweek'],
-        kick_off_time: match['kick_off_time'],
-        user_predictions: []
-      }
-      for (var x = 0; x < predictions.length; x++) {
-        var prediction = predictions[x]
-        var author = prediction['author']['username']
-        if (author === username) {
-          // This prediction belongs to the current user
-          match_obj.user_predictions.push(prediction)
-        } else {
-          // This prediction doesn't belong to the current user
+      if (err) throw err;
+      for (var i = 0; i < res.length; i++) {
+        var match = res[i]
+        var predictions = match['predictions']
+        var match_obj = {
+          home_team: match['home_team'],
+          away_team: match['away_team'],
+          gameweek: match['gameweek'],
+          kick_off_time: match['kick_off_time'],
+          user_predictions: []
         }
-      }
+        for (var x = 0; x < predictions.length; x++) {
+          var prediction = predictions[x]
+          var author = prediction['author']['username']
+          if (author === username) {
+            // This prediction belongs to the current user
+            match_obj.user_predictions.push(prediction)
+          } else {
+            // This prediction doesn't belong to the current user
+          }
+        }
 
-      final_preds_arr.push(match_obj)
-    }
-    console.log(final_preds_arr)
+        final_preds_arr.push(match_obj)
+      }
+      resolve(final_preds_arr)
+    })
   })
 }
 

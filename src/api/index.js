@@ -24,7 +24,8 @@ exports.routes = () => {
 	app.use(require("express-session")({    
 		secret: env.SESSION_SECRET,    
 		resave: false,    
-		saveUninitialized: false
+		saveUninitialized: false,
+		cookie: {httpOnly: false}
 	}));
 
 	passport.use(new LocalStrategy(User.authenticate()));

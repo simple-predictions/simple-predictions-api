@@ -31,7 +31,7 @@ exports.predictions = (express) => {
     res.json();
   })
 
-  express.get('/getuserpredictions', (req, res) => {
+  express.get('/getuserpredictions', async (req, res) => {
     if (!req.session.passport) {
       res.status(401)
       res.json()
@@ -40,7 +40,7 @@ exports.predictions = (express) => {
     const username = req.session.passport.user
     const gameweek = req.body.gameweek || null
 
-    getUserPredictions(username, gameweek)
-    res.json()
+    const preds = await getUserPredictions(username, gameweek)
+    res.json(preds)
   })
 }

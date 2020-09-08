@@ -7,7 +7,7 @@ exports.app = ({app}) => {
     res.status(200).end();
   });
 
-  app.use(cors());
+  app.use(cors({origin: 'http://127.0.0.1:3000', credentials: true}));
 
   // Load API Routes
   app.use('/', routes())
