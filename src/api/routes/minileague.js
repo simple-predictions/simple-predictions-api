@@ -28,10 +28,10 @@ exports.minileague = (express) => {
     res.json({})
   })
 
-  express.get('/minileaguepredictions', (req, res) => {
+  express.get('/minileaguepredictions', async (req, res) => {
     const league_name = req.query.league_name
     console.log(req.query.league_name)
-    miniLeaguePredictions(league_name)
-    res.json({})
+    const preds = await miniLeaguePredictions(league_name)
+    res.json({preds})
   })
 }
