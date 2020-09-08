@@ -41,7 +41,7 @@ client.connect().then(() => {
   exports.table = table;
   minileague_table = client.db('simple-predictions-api').collection('minileague');
   exports.minileague_table = minileague_table;
-  replaceCronJobs()
+  //replaceCronJobs()
 })
 
 // LogDNA Bunyan connection
@@ -451,7 +451,7 @@ function getMiniLeagueTable() {
 
 
 // TIMING SECTION
-var CronJob = require('cron').CronJob;
+/*var CronJob = require('cron').CronJob;
 
 var update_fixtures_job = new CronJob('20 * * * *', function () {
   console.info('updating fixture list...')
@@ -474,67 +474,4 @@ var master_job = new CronJob('0 0 * * 1', function() {
   replaceCronJobs()
 })
 
-master_job.start()
-
-async function replaceCronJobs() {
-  console.info('replacing cron jobs')
-  var jobs_arr = [];
-  var times_arr = [];
-  await new Promise((resolve, reject) => {table.distinct('kick_off_time', function(err,result){
-    if (err) throw err;
-    times_arr = result;
-    resolve()
-  })});
-  // Loop through times_arr
-  for (var i = 0;i < times_arr.length;i++) {
-    var time = times_arr[i];
-    var datetime = new Date(time);
-    // Checks if date if in future. If in past, skip iteration
-    /*if (datetime < Date.now){
-      continue
-    }*/
-    // Run 2 minutes later than specified
-    var minutes = datetime.getMinutes()+2;
-    var hours = datetime.getHours();
-    var date = datetime.getDate();
-    var month = datetime.getMonth();
-    var job = new CronJob(minutes+' '+hours+' '+date+' '+month+' *', function() {
-      console.info('game start cron job running')
-      getTalkSportWeekNum().then(weeknum => {
-        updateFixturesAndPredictions(weeknum);
-        generateTwoHoursScoreCheckingCron();
-      })
-    })
-    jobs_arr.push(job)
-  }
-  for (var i = 0; i < jobs_arr.length;i++) {
-    job = jobs_arr[i];
-    job.start()
-  }
-}
-
-function generateTwoHoursScoreCheckingCron() {
-  console.info('generating two hours score checking cron')
-  datetime = new Date(Date.now())
-  var twoHourCheckScoreJobs = [];
-  for (var i = 0;i < 120;i++) {
-    datetime.setTime(datetime.getTime()+(1*60*1000))
-    var minutes = datetime.getMinutes();
-    var hours = datetime.getHours();
-    var date = datetime.getDate();
-    var month = datetime.getMonth();
-    var job = new CronJob(minutes+' '+hours+' '+date+' '+month+' *', function() {
-      // Updates scores from Twitter
-      console.info('updating scores from twitter in cron job')
-      live_scoring.updateLiveScores();
-      // Updates scores from football-data.org
-      // This doesn't need to be run until the end of the game!
-      updateFootballDataScores();
-    })
-    twoHourCheckScoreJobs.push(job);
-  }
-  for (var i = 0;i < twoHourCheckScoreJobs.length; i++) {
-    job = twoHourCheckScoreJobs[i];
-    job.start();
-  }
-}
+master_job.start()*/

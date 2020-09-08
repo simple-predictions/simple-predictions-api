@@ -3,6 +3,16 @@ const Prediction = require('../models/user').prediction
 const User = require('../models/user').user
 const https = require('https')
 
+exports.updateManyPredictions = (username, json) => {
+  for (var i = 0; i < json.length; i++) {
+    var prediction = json[i]
+    var home_pred = prediction['home_pred']
+    var away_pred = prediction['away_pred']
+    var game_id = prediction['game_id']
+    this.updatePrediction(username, home_pred, away_pred, game_id)
+  }
+}
+
 exports.updatePrediction = (username, home_pred, away_pred, game_id) => {
   User.findOne({username: username}, function (err, res) {
     const user_id = res['_id']

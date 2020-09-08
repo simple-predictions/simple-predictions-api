@@ -1,6 +1,7 @@
 const expressLoader = require('./express').app
 const mongooseLoader = require('./mongoose').mongoose
 const diLoader = require('./di').di
+const jobsLoader = require('./jobs').jobs
 const userModel = require('../models/user.js').user
 
 exports.expressApp = async ({expressApp}) => {
@@ -16,4 +17,6 @@ exports.expressApp = async ({expressApp}) => {
       // whateverModel
     ],
   });
+
+  await jobsLoader({agenda})
 }
