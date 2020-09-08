@@ -10,7 +10,6 @@ exports.games = () => {
     headers: { 'Origin': 'https://www.premierleague.com' }
   }
 
-
   https.get(options, resp => {
     let data = ''
 

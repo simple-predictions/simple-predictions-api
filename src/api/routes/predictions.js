@@ -1,4 +1,5 @@
 const updatePrediction = require('../../services/predictions').updatePrediction
+const getUserPredictions = require('../../services/predictions').getUserPredictions
 
 exports.predictions = (express) => {
   express.post('/updateprediction', (req,res) => {
@@ -16,7 +17,9 @@ exports.predictions = (express) => {
 
     res.json();
   })
-  express.get('/getpredictions', (req, res) => {
-    // https://footballapi.pulselive.com/football/compseasons/363/gameweeks
+
+  express.get('/getuserpredictions', (req, res) => {
+    getUserPredictions()
+    res.json()
   })
 }
