@@ -13,6 +13,7 @@ exports.predictions = (express) => {
     const predictions = req.body.predictions
 
     updateManyPredictions(username, predictions)
+    res.json()
   })
 
   express.post('/updateprediction', (req,res) => {

@@ -3,7 +3,7 @@ const Prediction = require('../models/user').prediction
 const User = require('../models/user').user
 const https = require('https')
 
-exports.updateManyPredictions = (username, json) => {
+exports.updateManyPredictions = async (username, json) => {
   for (var i = 0; i < json.length; i++) {
     var prediction = json[i]
     var home_pred = prediction['home_pred']
@@ -60,7 +60,8 @@ exports.getUserPredictions = async (username, gameweek) => {
           away_team: match['away_team'],
           gameweek: match['gameweek'],
           kick_off_time: match['kick_off_time'],
-          user_predictions: []
+          user_predictions: [],
+          _id: match['_id']
         }
         for (var x = 0; x < predictions.length; x++) {
           var prediction = predictions[x]
