@@ -41,9 +41,9 @@ exports.updatePrediction = (username, home_pred, away_pred, game_id) => {
 }
 
 exports.getUserPredictions = async (username, gameweek) => {
-  return await new Promise((resolve) => {
-    var gameweek_num = gameweek || getGameweek()
-    gameweek_num = 1
+  return await new Promise(async (resolve) => {
+    const talksport_gameweek = await getGameweek()
+    var gameweek_num = gameweek || talksport_gameweek
 
     Match.find({gameweek: gameweek_num}).populate({
       path: 'predictions',
@@ -84,26 +84,28 @@ exports.getUserPredictions = async (username, gameweek) => {
 exports.getPrediction = (pred_id) => {
 }
 
-function getGameweek() {
-  const options = {
-    host: 'cors-anywhere.herokuapp.com',
-    path: '/https://footballapi.pulselive.com/football/compseasons/363/gameweeks',
-    method: 'GET',
-    port: 443,
-    headers: { 'Origin': 'https://www.premierleague.com' }
-  }
+async function getGameweek() {
+  return await new Promise((resolve) => {
+    const options = {
+      host: 'cors-anywhere.herokuapp.com',
+      path: '/https://footballapi.pulselive.com/football/compseasons/363/gameweeks',
+      method: 'GET',
+      port: 443,
+      headers: { 'Origin': 'https://www.premierleague.com' }
+    }
 
-  https.get(options, resp => {
-    let data = ''
+    https.get(options, resp => {
+      let data = ''
 
-    resp.on('data', c => {
-      data += c
-    })
+      resp.on('data', c => {
+        data += c
+      })
 
-    resp.on('end', () => {
-      const json = JSON.parse(data)
-      const gameweek_num = calculateEarliestGameweek(json)
-      return gameweek_num
+      resp.on('end', () => {
+        const json = JSON.parse(data)
+        const gameweek_num = calculateEarliestGameweek(json)
+        resolve(gameweek_num)
+      })
     })
   })
 }

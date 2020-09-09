@@ -38,8 +38,9 @@ exports.predictions = (express) => {
       res.json()
       return
     }
+    
     const username = req.session.passport.user
-    const gameweek = req.body.gameweek || null
+    const gameweek = req.query.gameweek || null
 
     const preds = await getUserPredictions(username, gameweek)
     res.json(preds)
