@@ -1,3 +1,5 @@
+const scoreGames = require('../../services/scoring').scoreGames
+
 exports.score = (express) => {
   express.get('/updatelivescores',(req,res) => {
     live_scoring.updateLiveScores();
@@ -18,9 +20,8 @@ exports.score = (express) => {
     res.json();
   })
 
-  express.post('/scoregames',(req,res) => {
-    scoring.scoreGames();
-    logger.info('Score games')
+  express.get('/scoregames',(req,res) => {
+    scoreGames();
     res.json();
   })
 }

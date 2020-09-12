@@ -18,6 +18,10 @@ exports.updatePrediction = (username, home_pred, away_pred, game_id) => {
     const user_id = res['_id']
     if (err) throw err;
     Match.findOne({_id: game_id}).populate({path: 'predictions'}).exec(function (err, match) {
+      if (new Date(match.kick_off_time).getTime() < Date.now()) {
+        console.log('You cannot modify your predictions after kick off')
+        return
+      }
       const predictions = match['predictions']
       const exists = predictions.some(pred => String(pred.author) == String(user_id))
       if (!exists) {
@@ -42,7 +46,7 @@ exports.updatePrediction = (username, home_pred, away_pred, game_id) => {
 
 exports.getUserPredictions = async (username, gameweek) => {
   return await new Promise(async (resolve) => {
-    const talksport_gameweek = await getGameweek()
+    const talksport_gameweek = await this.getGameweek()
     var gameweek_num = gameweek || talksport_gameweek
 
     Match.find({gameweek: gameweek_num}).populate({
@@ -84,7 +88,7 @@ exports.getUserPredictions = async (username, gameweek) => {
 exports.getPrediction = (pred_id) => {
 }
 
-async function getGameweek() {
+exports.getGameweek = async function getGameweek() {
   return await new Promise((resolve) => {
     const options = {
       host: 'cors-anywhere.herokuapp.com',

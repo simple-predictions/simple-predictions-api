@@ -12,7 +12,7 @@ const LocalStrategy = require('passport-local').Strategy;
 const User = require('../models/user.js').user
 const env = require('dotenv').config()['parsed'] || process.env;
 
-exports.routes = () => {
+exports.routes = (agendaInstance) => {
 	const app = Router();
 
 	app.use(bodyParser.json())
@@ -34,7 +34,7 @@ exports.routes = () => {
 
 	auth(app);
 	generic(app);
-	jobs(app);
+	jobs(app, agendaInstance);
 	predictions(app);
 	score(app);
 	games(app);

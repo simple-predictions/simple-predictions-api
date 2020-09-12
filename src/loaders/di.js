@@ -8,6 +8,7 @@ exports.di = ({ mongoConnection, models }) => {
     });
 
     const agendaInstance = agendaFactory({ mongoConnection });
+    agendaInstance.start()
 
     Container.set('agendaInstance', agendaInstance);
 

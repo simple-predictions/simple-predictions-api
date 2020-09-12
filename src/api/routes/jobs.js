@@ -1,4 +1,4 @@
-exports.jobs = (express) => {
+exports.jobs = (express, agendaInstance) => {
   express.get('/replacecronjobs', (req,res) => {
     console.info('replace cron jobs called')
     replaceCronJobs()
@@ -7,7 +7,7 @@ exports.jobs = (express) => {
 
   express.get('/generatetwohours',(req, res) => {
     console.info('generate two hours called')
-    generateTwoHoursScoreCheckingCron()
+    generateTwoHoursScoreCheckingCron(agendaInstance)
     res.json()
   })
 }

@@ -16,7 +16,8 @@ const PredictionSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'matches'
     },
-    locked: { type: Boolean, default: false }
+    locked: { type: Boolean, default: false },
+    points: Number
 });
 
 const MatchSchema = new mongoose.Schema({
@@ -26,7 +27,8 @@ const MatchSchema = new mongoose.Schema({
     gameweek: Number,
     kick_off_time: Date,
     live_home_score: Number,
-    live_away_score: Number
+    live_away_score: Number,
+    status: String
 });
 
 UserSchema.plugin(passportLocalMongoose);

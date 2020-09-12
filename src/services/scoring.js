@@ -1,6 +1,9 @@
+const https = require('https')
 const Twit = require('twit');
+const { scoreGames } = require('../scoring');
 const env = require('dotenv').config()['parsed'] || process.env;
 const Match = require('../models/user').match
+const Prediction = require('../models/user').prediction
 
 var T = new Twit({
   consumer_key:         'S5Kfhe84lyy5anAwIfipS5rzR',
@@ -10,8 +13,105 @@ var T = new Twit({
   timeout_ms:           60*1000,  // optional HTTP request timeout to apply to all requests.
 })
 
+exports.scoreGames = () => {
+  console.info('score games called')
+  return new Promise(async function (resolve, reject){
+  var games;
+  await new Promise((resolve, reject) => Match.find({}).populate('predictions').exec((err, result) => {
+      if (err) throw err;
+      games = result;
+      resolve();
+  }))
+  if (!games) {
+      throw ('Error: Games array empty. Database is empty!')
+  }
+  // Loop through array of games
+  for (var i = 0;i < games.length;i++) {
+    var game = games[i];
+    var home_team = game['home_team']
+    var away_team = game['away_team']
+    var game_id = game['_id']
+    var new_data = {$set: {}}
+    var predictions = game['predictions']
+    for (var x = 0;x < predictions.length;x++){
+      var prediction = predictions[x];
+      var pred_id = prediction['_id']
+      var pred_home = prediction['home_pred'];
+      var pred_away = prediction['away_pred'];
+      var live_home = game['live_home_score'];
+      var live_away = game['live_away_score'];
+      var banker_mult = game['banker_multiplier'];
+      var banker = prediction['banker'] || false;
+      var insurance = prediction['insurance'] || false;
+      var points = calculateScores(pred_home, pred_away, live_home, live_away, banker_mult, banker, insurance);
+      new_data['$set']['points'] = points;
+
+      await new Promise((resolve, reject) => {
+        Prediction.updateOne({_id: pred_id}, new_data, function(err, result){
+          if (err) throw err;
+          resolve();
+      })});
+    }
+  }
+  resolve()
+  })
+}
+
+function calculateScores(pred_home, pred_away, live_home, live_away, banker_mult, banker, insurance){
+  var points;
+  // Check if predictions present
+  if (typeof pred_home == 'undefined' || typeof pred_away == 'undefined' || typeof live_home == 'undefined' || typeof live_away == 'undefined'){
+      points = 0;
+  } else {
+      // Check if exactly correct
+      if (pred_home == live_home && pred_away == live_away) {
+          points = 30;
+      } else {
+          // Check if draw
+          if (pred_home == pred_away && live_home == live_away) {
+              points = 20;
+          } else{
+              // Check if correct goal difference
+              if ((pred_home - live_home) == (pred_away - live_away)) {
+                  points = 15;
+              } else {
+                  // Check if result correct
+                  if (((pred_home > pred_away) && (live_home > live_away)) || (pred_home < pred_away) && (live_home < live_away)) {
+                      points = 10;
+                  } else {
+                      points = -10;
+                  }
+              }
+          }
+      }
+  }
+
+  // Now apply banker and insurance chips
+  if ((points < 0)&&(insurance)) {
+      points = 0;
+  }
+  if (banker) {
+      points = points*banker_mult;
+  }
+  console.log(points)
+  return points;
+}
+
+function fixTeamNameProblems(name){
+  name = name.replace('AFC','');
+  name = name.replace('FC','');
+  name = name.replace('Hotspur','');
+  name = name.trim();
+  if (name == 'Wolverhampton Wanderers') {name = 'Wolves'};
+  if (name == 'Brighton & Hove Albion') {name = 'Brighton'};
+  if (name == 'Manchester United') {name = 'Man Utd'};
+  if (name == 'Manchester City') {name = 'Man City'};
+  return name
+}
+
 exports.updateLiveScores = async () => {
-  await scoring.scoreGames()
+  console.log('scoring live games begin')
+  await scoreGames()
   // Get request used rather than streaming because it can be filtered by account (more narrowly)
   T.get('statuses/user_timeline', { user_id: 343627165, count: 50 }).then(async function(result) {
     var tweets = result['data']
@@ -48,22 +148,23 @@ exports.updateLiveScores = async () => {
       away_team = teams[1].split(/ [^ ]*$/)[0]
       home_team = fixTeamNameProblems(home_team);
       away_team = fixTeamNameProblems(away_team);
-      await new Promise((resolve, reject) => {Match.findOne({home_team: home_team, away_team: away_team}, async function(err, result){
+      await new Promise((resolve, reject) => {
+        Match.findOne({home_team: home_team, away_team: away_team}, async function(err, result){
         if (result == null||home_score == null){
-          await scoring.scoreGames()
+          await scoreGames()
           resolve()
         } else {
         if (result['live_home_score']+result['live_away_score'] < combined_score || result['live_home_score'] == null) {
           // Update the score as it is greater than the previous score
-          id = result['id'];
+          id = result['_id'];
           console.log('set score in updatelivescores: '+home_team+' vs '+away_team+' to '+home_score+' - '+away_score)
-          await new Promise((resolve, reject) => {Match.updateOne({id:id}, { $set: {live_home_score: home_score, live_away_score: away_score}}, async function(err, result){
-            await scoring.scoreGames()
+          await new Promise((resolve, reject) => {Match.updateOne({_id:id}, { $set: {live_home_score: home_score, live_away_score: away_score}}, async function(err, result){
+            await scoreGames()
             resolve()
           })})
           // Call score game to update the scoring
         }
-        await scoring.scoreGames()
+        await scoreGames()
         resolve()
         }
       })})
@@ -88,6 +189,7 @@ exports.updateFootballDataScores = () => {
       if (team=='Leicester') {team='Leicester City'};
       if (team=='Crystal Pal') {team='Crystal Palace'};
       if (team=='Norwich City') {team='Norwich'};
+      if (team=='Wolverhampton Wanderers') {team='Wolverhampton'};
       return team
     }
     home_team = fixTeams(home_team);
@@ -96,7 +198,7 @@ exports.updateFootballDataScores = () => {
     var away_team_id = teams[away_team];
     var options = {
       hostname: 'api.football-data.org',
-      path: '/v2/teams/'+home_team_id+'/matches?venue=HOME',
+      path: '/v2/competitions/PL',
       method: 'GET',
       headers: {
         'X-Auth-Token': env['FOOTBALL_DATA_API_AUTH']
@@ -109,11 +211,11 @@ exports.updateFootballDataScores = () => {
       })
       res.on('end',() => {
         json = JSON.parse(data)
-        var matchday = checkMatchday(json,result,away_team_id)
+        var matchday = checkMatchday(json)
         resolve(matchday)
       })
     }))
-
+    console.log('matchday is '+matchday)
     options = {
       hostname: 'api.football-data.org',
       path: '/v2/competitions/PL/matches?matchday='+matchday,
@@ -133,6 +235,11 @@ exports.updateFootballDataScores = () => {
       })
     })
   });
+}
+
+function checkMatchday(json){
+  const matchday = json['currentSeason']['currentMatchday']
+  return matchday
 }
 
 async function getFootballDataIDs(){
@@ -183,9 +290,9 @@ async function updateDBScoresFootballData(json) {
     await new Promise((resolve, reject) => {Match.findOne({home_team: home_team, away_team: away_team}, async function(err, result){
       if (result == null||home_score == null){
         if (result) {
-          if (home_score == null && away_score == null && result['kick_off_time'] > Date.now() && !(result['live_home_score'] > 0) && !(result['live_away_score'] > 0)) {
+          if (home_score == null && away_score == null && result['kick_off_time'] < Date.now() && !(result['live_home_score'] > 0) && !(result['live_away_score'] > 0)) {
             console.log('set score in updatedbfootballdata1 '+home_team+' vs '+away_team+' to 0-0')
-            await new Promise((resolve, reject) => {Match.updateOne({id:id}, { $set: {live_home_score: 0, live_away_score: 0}}, function(err, result) {
+            await new Promise((resolve, reject) => {Match.updateOne({_id:result['_id']}, { $set: {live_home_score: 0, live_away_score: 0}}, function(err, result) {
               console.info('set scores to 0')
               resolve()
             })})
@@ -194,18 +301,18 @@ async function updateDBScoresFootballData(json) {
         resolve()
       } else {
       status = match['status'];
-      id = result['id'];
+      id = result['_id'];
       if (result['live_home_score']+result['live_away_score'] < combined_score || result['live_home_score'] == null) {
         // Update the score as it is greater than the previous score
         console.log('set score in updatedbfootballdata2 '+home_team+' vs '+away_team+' to '+home_score+' - '+away_score)
-        await new Promise((resolve, reject) => {Match.updateOne({id:id}, { $set: {live_home_score: home_score, live_away_score: away_score, status: status}}, function(err, result){
+        await new Promise((resolve, reject) => {Match.updateOne({_id:id}, { $set: {live_home_score: home_score, live_away_score: away_score, status: status}}, function(err, result){
           console.info('score updated through football-data api')
           resolve()
         })})
-        await scoring.scoreGames();
+        await scoreGames();
       }
       // Still update game status as game is present
-      await new Promise((resolve, reject) => {Match.updateOne({id: id}, { $set: {status: status} }, function(err, result){
+      await new Promise((resolve, reject) => {Match.updateOne({_id: id}, { $set: {status: status} }, function(err, result){
         console.info('game status updated')
         resolve()
       }

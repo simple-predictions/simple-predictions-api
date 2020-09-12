@@ -5,7 +5,6 @@ const jobsLoader = require('./jobs').jobs
 const userModel = require('../models/user.js').user
 
 exports.expressApp = async ({expressApp}) => {
-  await expressLoader({ app: expressApp });
   
   const mongoConnection = await mongooseLoader();
 
@@ -17,6 +16,8 @@ exports.expressApp = async ({expressApp}) => {
       // whateverModel
     ],
   });
+
+  await expressLoader({ app: expressApp, agendaInstance: agenda });
 
   await jobsLoader({agenda})
 }

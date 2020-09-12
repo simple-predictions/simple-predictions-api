@@ -1,4 +1,4 @@
-const { getUserPredictions } = require('./predictions')
+const { getUserPredictions, getGameweek } = require('./predictions')
 
 const MiniLeague = require('../models/minileague').minileague
 const User = require('../models/user').user
@@ -23,13 +23,14 @@ exports.joinMiniLeague = (username, league_name) => {
   })
 }
 
-exports.miniLeaguePredictions = async (league_name) => {
+exports.miniLeaguePredictions = async (league_id) => {
   return await new Promise((resolve) => {
-    MiniLeague.find({name: league_name}).populate({path:'members', populate:{path: 'predictions', populate: {path: 'match'}}}).exec(function (err, res) {
+    MiniLeague.find({_id: league_id}).populate({path:'members', populate:{path: 'predictions', populate: {path: 'match'}}}).exec(async function (err, res) {
       if (err) throw err;
       var members = res[0]['members']
+      const currentGameweek = await getGameweek()
 
-      var match_preds_arr = []
+      var match_preds_obj = {'matches': [], 'members':[]}
       for (var i = 0; i < members.length; i++) {
         // Loop through members
         var member = members[i]
@@ -40,19 +41,38 @@ exports.miniLeaguePredictions = async (league_name) => {
           var prediction = member_predictions[x]
           // .toObject() very important here because otherwise it references itself and creates an infinite loop
           var match = prediction['match'].toObject()
-          var match_exists = match_preds_arr.some(arr_match => arr_match._id === match._id)
+          if (match['gameweek'] !== currentGameweek) {
+            continue
+          }
+          var match_exists = match_preds_obj['matches'].some(arr_match => arr_match._id === match._id)
           if (!match_exists) {
             match['predictions'] = []
-            match_preds_arr.push(match)
+            match_preds_obj['matches'].push(match)
           }
-          var match_index = match_preds_arr.findIndex(arr_match => arr_match._id === match._id)
+          var match_index = match_preds_obj['matches'].findIndex(arr_match => arr_match._id === match._id)
           prediction = prediction.toObject()
           prediction['username'] = member['username']
-          console.log(prediction)
-          match_preds_arr[match_index]['predictions'].push(prediction)
+          match_preds_obj['matches'][match_index]['predictions'].push(prediction)
         }
       }
-      resolve(match_preds_arr)
+      match_preds_obj['members'] = members
+      resolve(match_preds_obj)
+    })
+  })
+}
+
+exports.getMiniLeagues = async (username) => {
+  return await new Promise((resolve) => {
+    User.findOne({username: username}, function(err, res) {
+      if (err) throw err;
+      const user_id = res['_id']
+
+      MiniLeague.find({members: user_id }, function (err, res) {
+        if (err) throw err;
+      }).populate('members').exec(function (err, res) {
+        if (err) throw err;
+        resolve(res)
+      })
     })
   })
 }
