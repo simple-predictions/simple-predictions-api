@@ -49,7 +49,7 @@ exports.getUserPredictions = async (username, gameweek) => {
     const talksport_gameweek = await this.getGameweek()
     var gameweek_num = gameweek || talksport_gameweek
 
-    Match.find({gameweek: gameweek_num}).populate({
+    Match.find({gameweek: gameweek_num}).sort('kick_off_time').populate({
       path: 'predictions',
       populate: { path: 'author' }
     }).exec(function (err, res) {
