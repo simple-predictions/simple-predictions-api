@@ -4,11 +4,21 @@ const env = require('dotenv').config()['parsed'] || process.env;
 
 const Sentry = require('@sentry/node');
 const environment = process.env.NODE_ENV || 'development';
-
-Sentry.init({ dsn: 'https://4fc238857c344c5f90ecc4b3ebcce7d6@o342120.ingest.sentry.io/5264910', environment: environment });
-
+const Tracing = require("@sentry/tracing");
+//const {MongoClient} = require("mongodb");
 const express = require('express')()
-const {MongoClient} = require('mongodb');
+
+Sentry.init({
+  dsn: 'https://4fc238857c344c5f90ecc4b3ebcce7d6@o342120.ingest.sentry.io/5264910',
+  integrations: [
+    new Sentry.Integrations.Http({ tracing: true }),
+    new Tracing.Integrations.Mongo(),
+    new Tracing.Integrations.Express({express})
+  ], 
+  environment: environment,
+  tracesSampleRate: 1.0
+});
+
 const path = require('path')
 const PORT = process.env.PORT || 5000
 const ids = { 'sol': '598f8e9a-af62-48e9-ac88-ae641071794d', 'phil': 'b64cd765-6564-41b0-8cfd-4e5b4721505e', 'jonny': '75406c71-6aa2-4ac5-801f-e87bd267613c', 'sam': '22c1c71f-d18a-455f-ad07-4263dbf0cacc', 'jacob': 'fce60643-3310-4e18-9e19-e5bc647df7a9', 'lila': '06ea1097-369b-40e2-8cf8-159265dfa708'}
@@ -22,6 +32,9 @@ const scoring = require('./scoring.js');
 exports.https = https;
 
 // Use imported app
+express.use(Sentry.Handlers.requestHandler());
+express.use(Sentry.Handlers.tracingHandler());
+express.use(Sentry.Handlers.errorHandler());
 require('./loaders').expressApp({ expressApp: express })
 
 var T = new Twit({
@@ -38,14 +51,14 @@ express.listen(PORT, () => console.log(`Listening on ${ PORT }`))
 var table
 const uri = 'mongodb://127.0.0.1:27017/simple-predictions-api'
 //const uri = 'mongodb+srv://compass:solaustin@simple-predictions-api-gpv4x.gcp.mongodb.net/simple-predictions-api?retryWrites=true&w=majority'
-const client = new MongoClient(uri, {useUnifiedTopology: true});
+/*const client = new MongoClient(uri, {useUnifiedTopology: true});
 client.connect().then(() => {
   table = client.db('simple-predictions-api').collection('fixtures');
   exports.table = table;
   minileague_table = client.db('simple-predictions-api').collection('minileague');
   exports.minileague_table = minileague_table;
   //replaceCronJobs()
-})
+})*/
 
 // LogDNA Bunyan connection
 var bunyan = require('bunyan');

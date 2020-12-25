@@ -1,6 +1,6 @@
 const https = require('https')
 const Twit = require('twit');
-const { scoreGames } = require('../scoring');
+//const { scoreGames } = require('../scoring');
 const env = require('dotenv').config()['parsed'] || process.env;
 const Match = require('../models/user').match
 const Prediction = require('../models/user').prediction
@@ -56,6 +56,8 @@ exports.scoreGames = () => {
   resolve()
   })
 }
+
+scoreGames = exports.scoreGames
 
 function calculateScores(pred_home, pred_away, live_home, live_away, banker_mult, banker, insurance){
   var points;

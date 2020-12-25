@@ -1,6 +1,6 @@
 const routes = require('../api').routes
 const cors = require('cors')
-const express = require('express');
+//const express = require('express');
 const Agenda = require('agenda');
 
 exports.app = ({app, agendaInstance}) => {

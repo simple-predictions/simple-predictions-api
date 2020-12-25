@@ -45,7 +45,6 @@ exports.updatePrediction = (username, home_pred, away_pred, game_id) => {
 }
 
 exports.getUserPredictions = async (username, gameweek) => {
-  console.log('pre promise')
   return await new Promise(async (resolve) => {
     const talksport_gameweek = await this.getGameweek()
     var gameweek_num = gameweek || talksport_gameweek
@@ -54,7 +53,6 @@ exports.getUserPredictions = async (username, gameweek) => {
       path: 'predictions',
       populate: { path: 'author' }
     }).exec(function (err, res) {
-      console.log('exec fully populated')
       var final_preds_arr = []
 
       if (err) throw err;

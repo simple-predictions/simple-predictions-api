@@ -10,4 +10,9 @@ exports.generic = (express) => {
     table.deleteMany({}, {$multi: true})
     res.json()
   })
+
+  express.get('/error', (req, res) => {
+    throw Error('stop execution')
+    res.json({})
+  })
 }
