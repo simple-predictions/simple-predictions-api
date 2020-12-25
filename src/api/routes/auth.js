@@ -3,6 +3,10 @@ const passport = require('passport')
 const User = require('../../models/user').user
 
 exports.auth = (express) => {
+  express.post('/test', (req, res) => {
+    res.json('test')
+  })
+
   express.post('/login', passport.authenticate('local'), (req,res) => {
     res.json(auth_user())
   })

@@ -38,7 +38,6 @@ exports.predictions = (express) => {
       res.json()
       return
     }
-    
     const username = req.session.passport.user
     const gameweek = req.query.gameweek || null
 

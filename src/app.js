@@ -1,3 +1,5 @@
+require('monitor').start();
+
 const env = require('dotenv').config()['parsed'] || process.env;
 
 const Sentry = require('@sentry/node');
@@ -34,7 +36,8 @@ express.listen(PORT, () => console.log(`Listening on ${ PORT }`))
 
 // MongoDB connection
 var table
-const uri = 'mongodb+srv://compass:solaustin@simple-predictions-api-gpv4x.gcp.mongodb.net/simple-predictions-api?retryWrites=true&w=majority'
+const uri = 'mongodb://127.0.0.1:27017/simple-predictions-api'
+//const uri = 'mongodb+srv://compass:solaustin@simple-predictions-api-gpv4x.gcp.mongodb.net/simple-predictions-api?retryWrites=true&w=majority'
 const client = new MongoClient(uri, {useUnifiedTopology: true});
 client.connect().then(() => {
   table = client.db('simple-predictions-api').collection('fixtures');
