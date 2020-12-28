@@ -34,8 +34,8 @@ exports.https = https;
 // Use imported app
 express.use(Sentry.Handlers.requestHandler());
 express.use(Sentry.Handlers.tracingHandler());
-express.use(Sentry.Handlers.errorHandler());
 require('./loaders').expressApp({ expressApp: express })
+express.use(Sentry.Handlers.errorHandler());
 
 var T = new Twit({
   consumer_key:         'S5Kfhe84lyy5anAwIfipS5rzR',

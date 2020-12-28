@@ -14,7 +14,7 @@ var T = new Twit({
 })
 
 exports.scoreGames = () => {
-  console.info('score games called')
+  console.info('score games /services/scoring.js called')
   return new Promise(async function (resolve, reject){
   var games;
   await new Promise((resolve, reject) => Match.find({}).populate('predictions').exec((err, result) => {
@@ -95,7 +95,6 @@ function calculateScores(pred_home, pred_away, live_home, live_away, banker_mult
   if (banker) {
       points = points*banker_mult;
   }
-  console.log(points)
   return points;
 }
 
@@ -103,11 +102,9 @@ function fixTeamNameProblems(name){
   name = name.replace('AFC','');
   name = name.replace('FC','');
   name = name.replace('Hotspur','');
+  name = name.replace('&', 'and')
   name = name.trim();
-  if (name == 'Wolverhampton Wanderers') {name = 'Wolves'};
   if (name == 'Brighton & Hove Albion') {name = 'Brighton'};
-  if (name == 'Manchester United') {name = 'Man Utd'};
-  if (name == 'Manchester City') {name = 'Man City'};
   return name
 }
 
@@ -286,7 +283,7 @@ async function updateDBScoresFootballData(json) {
     home_team = fixTeamNameProblems(home_team);
     away_team = fixTeamNameProblems(away_team);
     combined_score = home_score + away_score;
-    if (home_team && away_team && home_score && away_score) {
+    if ((home_team && away_team) && (home_score || home_score == 0) && (away_score || away_score == 0)) {
       console.log(`Currently checking in updateDBScoresFootballData for: ${home_team} vs ${away_team} with a final score of ${home_score}-${away_score}`)
     }
     await new Promise((resolve, reject) => {Match.findOne({home_team: home_team, away_team: away_team}, async function(err, result){

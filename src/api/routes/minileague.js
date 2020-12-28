@@ -8,7 +8,7 @@ exports.minileague = (express) => {
       return
     }
     const username = req.session.passport.user*/
-    const username = 'sol'
+    const username = 'solly'
     const league_name = req.body.league_name
 
     createMiniLeague(username, league_name)

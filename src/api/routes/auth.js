@@ -3,12 +3,12 @@ const passport = require('passport')
 const User = require('../../models/user').user
 
 exports.auth = (express) => {
-  express.post('/test', (req, res) => {
+  express.get('/test', (req, res) => {
     res.json('test')
   })
 
   express.post('/login', passport.authenticate('local'), (req,res) => {
-    res.json(auth_user())
+    res.json('Success')
   })
 
   express.post('/register', (req, res) => {
@@ -16,11 +16,14 @@ exports.auth = (express) => {
     const password = req.body.password
     User.register(new User({username: username}), password, function (err, user) {
       if(err){
-        console.log(err);
-        return res.render("register");
+        console.log(err)
+        res.status(409)
+        res.json(err)
+        return
       }
       passport.authenticate("local")(req, res, function(){
-        res.redirect("/secret");
+        res.status(200)
+        res.json()
       });
     })
   })

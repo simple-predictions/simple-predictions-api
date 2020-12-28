@@ -1,7 +1,7 @@
 const app = require('./app.js')
 
 exports.scoreGames = function(){
-    console.info('score games called')
+    console.info('score games scoring.js called')
     return new Promise(async function (resolve, reject){
     const ids_arr = Object.entries(app.ids)
     var games;

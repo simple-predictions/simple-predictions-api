@@ -65,7 +65,10 @@ exports.getUserPredictions = async (username, gameweek) => {
           gameweek: match['gameweek'],
           kick_off_time: match['kick_off_time'],
           user_predictions: [],
-          _id: match['_id']
+          _id: match['_id'],
+          live_home_score: match['live_home_score'],
+          live_away_score: match['live_away_score'],
+          status: match['status']
         }
         for (var x = 0; x < predictions.length; x++) {
           var prediction = predictions[x]
