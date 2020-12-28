@@ -41,6 +41,12 @@ exports.minileague = (express) => {
   })
 
   express.get('/minileaguepredictions', async (req, res) => {
+    if (!req.session.passport) {
+      res.status(401)
+      res.json()
+      return
+    }
+    
     const league_id = req.query.league_id
     console.log(req.query.league_id)
     const preds = await miniLeaguePredictions(league_id)

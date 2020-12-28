@@ -83,7 +83,8 @@ exports.getUserPredictions = async (username, gameweek) => {
 
         final_preds_arr.push(match_obj)
       }
-      resolve(final_preds_arr)
+      ret_obj = {data: final_preds_arr, gameweek: gameweek_num}
+      resolve(ret_obj)
     })
   })
 }

@@ -35,6 +35,8 @@ exports.miniLeaguePredictions = async (league_id) => {
         // Loop through members
         var member = members[i]
         var member_predictions = member['predictions']
+        member_predictions = member_predictions.sort((a,b) => a.match.kick_off_time - b.match.kick_off_time)
+        console.log(member_predictions)
         for (var x = 0; x < member_predictions.length; x++) {
           // Loop through member's predictions
           // Every prediction has a match assosiated with it
