@@ -1,3 +1,3 @@
 exports.auth_user = () => {
-  return 'test'
+  return 'Success'
 }

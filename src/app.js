@@ -5,7 +5,6 @@ const env = require('dotenv').config()['parsed'] || process.env;
 const Sentry = require('@sentry/node');
 const environment = process.env.NODE_ENV || 'development';
 const Tracing = require("@sentry/tracing");
-//const {MongoClient} = require("mongodb");
 const express = require('express')()
 
 Sentry.init({
@@ -19,17 +18,11 @@ Sentry.init({
   environment: environment
 });
 
-const path = require('path')
 const PORT = process.env.PORT || 5000
 const ids = { 'sol': '598f8e9a-af62-48e9-ac88-ae641071794d', 'phil': 'b64cd765-6564-41b0-8cfd-4e5b4721505e', 'jonny': '75406c71-6aa2-4ac5-801f-e87bd267613c', 'sam': '22c1c71f-d18a-455f-ad07-4263dbf0cacc', 'jacob': 'fce60643-3310-4e18-9e19-e5bc647df7a9', 'lila': '06ea1097-369b-40e2-8cf8-159265dfa708'}
 exports.ids = ids;
 const https = require('https');
 const Twit = require('twit');
-
-// Export for testing
-const scoring = require('./scoring.js');
-
-exports.https = https;
 
 // Use imported app
 express.use(Sentry.Handlers.tracingHandler());

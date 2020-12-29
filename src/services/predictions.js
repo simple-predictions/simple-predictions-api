@@ -45,7 +45,6 @@ exports.updatePrediction = (username, home_pred, away_pred, game_id) => {
 }
 
 exports.getUserPredictions = async (username, gameweek) => {
-  defofailpreds()
   return await new Promise(async (resolve) => {
     const talksport_gameweek = await this.getGameweek()
     var gameweek_num = gameweek || talksport_gameweek

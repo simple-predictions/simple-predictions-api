@@ -8,7 +8,7 @@ exports.auth = (express) => {
   })
 
   express.post('/login', passport.authenticate('local'), (req,res) => {
-    res.json('Success')
+    res.json(auth_user)
   })
 
   express.post('/register', (req, res) => {
