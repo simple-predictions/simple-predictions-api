@@ -1,4 +1,4 @@
-const app = require('./app.js')
+/*const app = require('./app.js')
 
 exports.scoreGames = function(){
     console.info('score games scoring.js called')
@@ -129,4 +129,4 @@ async function addMiniLeagueDataToDB(json, current_gameweek){
             resolve()
         })})
     }
-}
+}*/

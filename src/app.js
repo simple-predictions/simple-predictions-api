@@ -15,8 +15,8 @@ Sentry.init({
     new Tracing.Integrations.Mongo(),
     new Tracing.Integrations.Express({express})
   ], 
-  environment: environment,
-  tracesSampleRate: 1.0
+  tracesSampleRate: 1.0,
+  environment: environment
 });
 
 const path = require('path')
@@ -32,10 +32,9 @@ const scoring = require('./scoring.js');
 exports.https = https;
 
 // Use imported app
-express.use(Sentry.Handlers.requestHandler());
 express.use(Sentry.Handlers.tracingHandler());
+
 require('./loaders').expressApp({ expressApp: express })
-express.use(Sentry.Handlers.errorHandler());
 
 var T = new Twit({
   consumer_key:         'S5Kfhe84lyy5anAwIfipS5rzR',
