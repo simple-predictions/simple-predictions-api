@@ -95,8 +95,8 @@ exports.getPrediction = (pred_id) => {
 exports.getGameweek = async function getGameweek() {
   return await new Promise((resolve) => {
     const options = {
-      host: 'cors-anywhere.herokuapp.com',
-      path: '/https://footballapi.pulselive.com/football/compseasons/363/gameweeks',
+      host: 'footballapi.pulselive.com',
+      path: '/football/compseasons/363/gameweeks',
       method: 'GET',
       port: 443,
       headers: { 'Origin': 'https://www.premierleague.com' }

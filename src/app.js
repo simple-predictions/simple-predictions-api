@@ -62,3 +62,12 @@ var logger = bunyan.createLogger({
 });
 
 logger.info('Hello world!')
+
+// CORS Anywhere setup
+/*var port = '1234'
+var host = '0.0.0.0'
+
+var cors_proxy = require('cors-anywhere')
+cors_proxy.createServer({}).listen(port, host, function() {
+  console.log('CORS Proxy running on 1234')
+})*/

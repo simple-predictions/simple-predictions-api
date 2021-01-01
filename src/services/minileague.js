@@ -36,7 +36,6 @@ exports.miniLeaguePredictions = async (league_id) => {
         var member = members[i]
         var member_predictions = member['predictions']
         member_predictions = member_predictions.sort((a,b) => a.match.kick_off_time - b.match.kick_off_time)
-        console.log(member_predictions)
         for (var x = 0; x < member_predictions.length; x++) {
           // Loop through member's predictions
           // Every prediction has a match assosiated with it
@@ -82,7 +81,6 @@ exports.getMiniLeagues = async (username) => {
 exports.miniLeagueTable = async (league_id) => {
   return await new Promise((resolve) => {
     MiniLeague.findOne({_id: league_id}, function(err, res) {
-      console.log(res)
       if (err) throw err;
     }).populate({path: 'members', populate: { path: 'predictions'}}).exec(function(err, res) {
       if (err) throw err;
