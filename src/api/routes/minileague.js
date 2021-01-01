@@ -1,4 +1,4 @@
-const { joinMiniLeague, createMiniLeague, miniLeaguePredictions, getMiniLeagues } = require('../../services/minileague')
+const { joinMiniLeague, createMiniLeague, miniLeaguePredictions, getMiniLeagues, miniLeagueTable } = require('../../services/minileague')
 
 exports.minileague = (express) => {
   express.post('/createminileague', (req, res) => {
@@ -50,5 +50,17 @@ exports.minileague = (express) => {
     console.log(req.query.league_id)
     const preds = await miniLeaguePredictions(league_id)
     res.json(preds)
+  })
+
+  express.get('/minileaguetable', async (req, res) => {
+    if (!req.session.passport) {
+      res.status(401)
+      res.json()
+      return
+    }
+
+    const league_id = req.query.league_id
+    const table = await miniLeagueTable(league_id)
+    res.json(table)
   })
 }

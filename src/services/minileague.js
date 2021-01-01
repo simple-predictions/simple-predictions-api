@@ -78,3 +78,24 @@ exports.getMiniLeagues = async (username) => {
     })
   })
 }
+
+exports.miniLeagueTable = async (league_id) => {
+  return await new Promise((resolve) => {
+    MiniLeague.findOne({_id: league_id}, function(err, res) {
+      console.log(res)
+      if (err) throw err;
+    }).populate({path: 'members', populate: { path: 'predictions'}}).exec(function(err, res) {
+      if (err) throw err;
+      var members = []
+      for (var i = 0; i < res.members.length; i++) {
+        var member_predictions = res.members[i].predictions
+        var member_points = member_predictions.reduce(function(prev, cur) {
+          return prev + cur.points;
+        }, 0);
+        members.push({username: res.members[i].username, points: member_points})
+      }
+      members.sort((a,b) => b.points - a.points)
+      resolve(members)
+    })
+  })
+}
