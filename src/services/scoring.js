@@ -172,7 +172,7 @@ exports.updateLiveScores = async () => {
   })
 }
 
-exports.updateFootballDataScores = () => {
+exports.updateFootballDataScores = (optional_gameweek) => {
   console.info('updateFootballDataScores called')
   //var talkSport_week_num = await getTalkSportWeekNum();
   Match.findOne({}, async function(err, result){
@@ -214,6 +214,8 @@ exports.updateFootballDataScores = () => {
         resolve(matchday)
       })
     }))
+    // Use function param if given or alternatively use calculated current gameweek
+    matchday = optional_gameweek || matchday
     console.log('matchday is '+matchday)
     options = {
       hostname: 'api.football-data.org',
