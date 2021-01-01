@@ -62,7 +62,7 @@ scoreGames = exports.scoreGames
 function calculateScores(pred_home, pred_away, live_home, live_away, banker_mult, banker, insurance){
   var points;
   // Check if predictions present
-  if (typeof pred_home == 'undefined' || typeof pred_away == 'undefined' || typeof live_home == 'undefined' || typeof live_away == 'undefined'){
+  if (pred_home == null || pred_away == null || live_home == null || live_away == null){
       points = 0;
   } else {
       // Check if exactly correct

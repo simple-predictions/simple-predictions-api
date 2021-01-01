@@ -2,13 +2,12 @@ const { joinMiniLeague, createMiniLeague, miniLeaguePredictions, getMiniLeagues 
 
 exports.minileague = (express) => {
   express.post('/createminileague', (req, res) => {
-    /*if (!req.session.passport) {
+    if (!req.session.passport) {
       res.status(401)
       res.json()
       return
     }
-    const username = req.session.passport.user*/
-    const username = 'solly'
+    const username = req.session.passport.user
     const league_name = req.body.league_name
 
     createMiniLeague(username, league_name)

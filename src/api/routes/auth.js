@@ -1,6 +1,7 @@
 const auth_user = require('../../services/auth').auth_user
 const passport = require('passport')
 const User = require('../../models/user').user
+const getUserInfo = require('../../services/auth').getUserInfo
 
 exports.auth = (express) => {
   express.get('/test', (req, res) => {
@@ -26,5 +27,17 @@ exports.auth = (express) => {
         res.json()
       });
     })
+  })
+
+  express.get('/userinfo', async (req, res) => {
+    if (!req.session.passport) {
+      res.status(401)
+      res.json()
+      return
+    }
+    const username = req.session.passport.user
+
+    userinfo = await getUserInfo(username)
+    res.json(userinfo)
   })
 }
