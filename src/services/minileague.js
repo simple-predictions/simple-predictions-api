@@ -45,12 +45,12 @@ exports.miniLeaguePredictions = async (league_id) => {
           if (match['gameweek'] !== currentGameweek) {
             continue
           }
-          var match_exists = match_preds_obj['matches'].some(arr_match => arr_match._id === match._id)
+          var match_exists = match_preds_obj['matches'].some(arr_match => arr_match._id.toString() === match._id.toString())
           if (!match_exists) {
             match['predictions'] = []
             match_preds_obj['matches'].push(match)
           }
-          var match_index = match_preds_obj['matches'].findIndex(arr_match => arr_match._id === match._id)
+          var match_index = match_preds_obj['matches'].findIndex(arr_match => arr_match._id.toString() === match._id.toString())
           prediction = prediction.toObject()
           prediction['username'] = member['username']
           match_preds_obj['matches'][match_index]['predictions'].push(prediction)

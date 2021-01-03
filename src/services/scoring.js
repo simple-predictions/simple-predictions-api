@@ -101,7 +101,6 @@ function calculateScores(pred_home, pred_away, live_home, live_away, banker_mult
 function fixTeamNameProblems(name){
   name = name.replace('AFC','');
   name = name.replace('FC','');
-  name = name.replace('Hotspur','');
   name = name.replace('&', 'and')
   name = name.trim();
   if (name == 'Brighton & Hove Albion') {name = 'Brighton'};
