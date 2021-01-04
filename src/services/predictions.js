@@ -44,7 +44,7 @@ exports.updatePrediction = (username, home_pred, away_pred, game_id) => {
   })
 }
 
-exports.getUserPredictions = async (username, gameweek) => {
+exports.getUserPredictions = async (username, gameweek, include_future) => {
   return await new Promise(async (resolve) => {
     const talksport_gameweek = await this.getGameweek()
     var gameweek_num = gameweek || talksport_gameweek
@@ -74,6 +74,9 @@ exports.getUserPredictions = async (username, gameweek) => {
           var prediction = predictions[x]
           var author = prediction['author']['username']
           if (author === username) {
+            if (!include_future && Date.now() < match.kick_off_time) {
+              continue
+            }
             // This prediction belongs to the current user
             match_obj.user_predictions.push(prediction)
           } else {

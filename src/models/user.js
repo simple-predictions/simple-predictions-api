@@ -2,7 +2,8 @@ const mongoose = require('mongoose')
 const passportLocalMongoose = require('passport-local-mongoose');
 
 const UserSchema = new mongoose.Schema({
-    predictions: [{ type: mongoose.Schema.Types.ObjectId, ref: 'predictions' }]
+    predictions: [{ type: mongoose.Schema.Types.ObjectId, ref: 'predictions' }],
+    friends: [{ type: mongoose.Schema.Types.ObjectId, ref: 'users' }]
 });
 
 const PredictionSchema = new mongoose.Schema({

@@ -4,26 +4,49 @@ const MiniLeague = require('../models/minileague').minileague
 const User = require('../models/user').user
 
 exports.createMiniLeague = (username, league_name) => {
-  User.find({username: username}, function(err, res) {
+  return new Promise((resolve, reject) => {
+    User.find({username: username}, function(err, res) {
     if (err) throw err;
     const user_id = res[0]['_id']
-    MiniLeague.create({name: league_name, members: [user_id]}, function (err,res) {
-      if (err) throw err;
+    MiniLeague.findOne({name: league_name}, function(err, existing_league) {
+      if (err) throw err
+      if (existing_league) {
+        reject('A mini-league with this name already exists.')
+        return
+      } else {
+        MiniLeague.create({name: league_name, members: [user_id]}, function (err,res) {
+          if (err) throw err
+          resolve('Mini-league created')
+        })
+      }
     })
-  })
+  })})
 }
 
 exports.joinMiniLeague = (username, league_name) => {
-  User.find({username: username}, function(err, res) {
+  return new Promise((resolve, reject) => {
+    User.find({username: username}, function(err, res) {
     if (err) throw err;
     const user_id = res[0]['_id']
-    MiniLeague.updateOne({name: league_name}, {$push: {members: user_id}}, function(err) {
-      if (err) throw err;
+    MiniLeague.updateOne({name: league_name}, {$addToSet: {members: user_id}}, function(err, res) {
+      if (err) {
+        throw err
+      } else {
+        if (res.n === 1) {
+          if (res.nModified === 1) {
+            resolve('Success')
+          } else {
+            reject('You are already a member of '+league_name)
+          }
+        } else {
+          reject("Mini-league doesn't exist")
+        }
+      }
     })
-  })
+  })})
 }
 
-exports.miniLeaguePredictions = async (league_id) => {
+exports.miniLeaguePredictions = async (league_id, username) => {
   return await new Promise((resolve) => {
     MiniLeague.find({_id: league_id}).populate({path:'members', populate:{path: 'predictions', populate: {path: 'match'}}}).exec(async function (err, res) {
       if (err) throw err;
@@ -53,6 +76,11 @@ exports.miniLeaguePredictions = async (league_id) => {
           var match_index = match_preds_obj['matches'].findIndex(arr_match => arr_match._id.toString() === match._id.toString())
           prediction = prediction.toObject()
           prediction['username'] = member['username']
+          if (match.kick_off_time > Date.now() && prediction['username'] != username) {
+            delete prediction.home_pred
+            delete prediction.away_pred
+            prediction['error_message'] = 'Not kicked off'
+          }
           match_preds_obj['matches'][match_index]['predictions'].push(prediction)
         }
       }
