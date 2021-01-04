@@ -8,7 +8,7 @@ exports.app = ({app, agendaInstance}) => {
     res.status(200).end();
   });
 
-  app.use(cors({origin: 'http://127.0.0.1:3000', credentials: true}));
+  app.use(cors({origin: 'http://192.168.0.16:3000', credentials: true}));
 
   // Load API Routes
   app.use('/', routes(agendaInstance))
