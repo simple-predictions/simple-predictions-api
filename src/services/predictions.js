@@ -92,7 +92,7 @@ exports.getUserPredictions = async (username, gameweek, include_future) => {
   })
 }
 
-exports.getPrediction = (pred_id) => {
+exports.getPrediction = () => {
 }
 
 exports.getGameweek = async function getGameweek() {
