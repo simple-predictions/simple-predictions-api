@@ -25,11 +25,13 @@ exports.routes = (agendaInstance) => {
 	app.use(passport.initialize());
 	app.use(passport.session());
 
+	const domain = env.CORS_DOMAIN
+
 	app.use(express_session({    
 		secret: env.SESSION_SECRET,    
 		resave: false,    
 		saveUninitialized: false,
-		cookie: {httpOnly: false},
+		cookie: {httpOnly: false, domain: domain},
 		store: new MemoryStore({
 			checkPeriod: 86400000
 		})
