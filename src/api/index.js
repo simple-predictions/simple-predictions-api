@@ -2,6 +2,7 @@ const Router = require('express')
 const auth = require('./routes/auth').auth
 const generic = require('./routes/generic').generic
 const jobs = require('./routes/jobs').jobs
+const jira = require('./routes/jira').jira
 const predictions = require('./routes/predictions').predictions
 const score = require('./routes/score').score
 const games = require('./routes/games').games
@@ -36,6 +37,7 @@ exports.routes = (agendaInstance) => {
 	auth(app);
 	generic(app);
 	jobs(app, agendaInstance);
+	jira(app);
 	predictions(app);
 	score(app);
 	games(app);

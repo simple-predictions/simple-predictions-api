@@ -35,8 +35,8 @@ function updateFixtures(json) {
     var gameweek = game['gameweek']['gameweek']
     var kick_off_time = game['kickoff']['millis']
 
-    Match.findOneAndUpdate({home_team: home_team, away_team: away_team}, {gameweek: gameweek, kick_off_time: kick_off_time}, {new:true, upsert: true, setDefaultsOnInsert: true}, function(err) {
-      console.log(err)
+    Match.findOneAndUpdate({home_team: home_team, away_team: away_team}, {gameweek: gameweek, kick_off_time: kick_off_time}, {new:true, upsert: true, setDefaultsOnInsert: true, useFindAndModify: false}, function(err, res) {
+      if (err) throw err
     })
   }
 }

@@ -302,7 +302,7 @@ async function updateDBScoresFootballData(json) {
       } else {
       status = match['status'];
       id = result['_id'];
-      if (result['live_home_score']+result['live_away_score'] < combined_score || result['live_home_score'] == null) {
+      if (result['live_home_score']+result['live_away_score'] < combined_score || result['live_home_score'] == null || result['status'] == 'FINISHED') {
         // Update the score as it is greater than the previous score
         console.log('set score in updatedbfootballdata2 '+home_team+' vs '+away_team+' to '+home_score+' - '+away_score)
         await new Promise((resolve, reject) => {Match.updateOne({_id:id}, { $set: {live_home_score: home_score, live_away_score: away_score, status: status}}, function(err, result){
