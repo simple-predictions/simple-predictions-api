@@ -92,9 +92,6 @@ exports.getUserPredictions = async (username, gameweek, include_future) => {
   })
 }
 
-exports.getPrediction = () => {
-}
-
 exports.getGameweek = async function getGameweek() {
   return await new Promise((resolve) => {
     const options = {
