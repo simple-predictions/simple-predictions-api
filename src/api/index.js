@@ -13,6 +13,8 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const User = require('../models/user.js').user
 const env = require('dotenv').config()['parsed'] || process.env;
+const express_session = require('express-session')
+var MemoryStore = require('memorystore')(express_session)
 
 exports.routes = (agendaInstance) => {
 	const app = Router();
@@ -23,11 +25,14 @@ exports.routes = (agendaInstance) => {
 	app.use(passport.initialize());
 	app.use(passport.session());
 
-	app.use(require("express-session")({    
+	app.use(express_session({    
 		secret: env.SESSION_SECRET,    
 		resave: false,    
 		saveUninitialized: false,
-		cookie: {httpOnly: false}
+		cookie: {httpOnly: false},
+		store: new MemoryStore({
+			checkPeriod: 86400000
+		})
 	}));
 
 	passport.use(new LocalStrategy(User.authenticate()));
