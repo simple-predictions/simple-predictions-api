@@ -3,7 +3,10 @@ const passportLocalMongoose = require('passport-local-mongoose');
 
 const UserSchema = new mongoose.Schema({
     predictions: [{ type: mongoose.Schema.Types.ObjectId, ref: 'predictions' }],
-    friends: [{ type: mongoose.Schema.Types.ObjectId, ref: 'users' }]
+    friends: [{ type: mongoose.Schema.Types.ObjectId, ref: 'users' }],
+    email: String,
+    active: Boolean,
+    verification_token: String
 });
 
 const PredictionSchema = new mongoose.Schema({
