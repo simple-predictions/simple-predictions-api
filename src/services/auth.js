@@ -56,8 +56,8 @@ exports.resetPassword = (username) => {
         });
         
         const info = await transporter.sendMail({
-          from: "simplepredictions1@gmail.com", // sender address
-          to: "solomonabrahams100@gmail.com", // list of receivers
+          from: "Simple Predictions <simplepredictions1@gmail.com>", // sender address
+          to: res.email, // list of receivers
           subject: "Password reset", // Subject line
           html: "Please <a href='"+reset_link+"'>click here</a>", // html body
         });
