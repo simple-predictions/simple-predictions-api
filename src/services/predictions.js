@@ -72,6 +72,7 @@ exports.getUserPredictions = async (username, gameweek, include_future) => {
         }
         for (var x = 0; x < predictions.length; x++) {
           var prediction = predictions[x]
+          console.log(prediction)
           var author = prediction['author']['username']
           if (author === username) {
             if (!include_future && Date.now() < match.kick_off_time) {

@@ -58,6 +58,11 @@ exports.minileague = (express) => {
     
     const league_id = req.query.league_id
     const username = req.session.passport.user
+    if (!league_id) {
+      res.status(500)
+      res.json({members: [], matches: []})
+      return
+    }
 
     const preds = await miniLeaguePredictions(league_id, username)
     res.json(preds)
