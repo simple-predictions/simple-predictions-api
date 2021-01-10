@@ -45,7 +45,7 @@ exports.resetPassword = (username) => {
           if (err) throw err
         })
         
-        const reset_link = 'http://192.168.0.16:3000/createnewpassword?verification_token='+verification_token+'&username='+username
+        const reset_link = 'http://www.saltbeefleague.co.uk/createnewpassword?verification_token='+verification_token+'&username='+username
 
         const transporter = nodemailer.createTransport({
           service: 'gmail',
