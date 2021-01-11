@@ -46,11 +46,20 @@ exports.joinMiniLeague = (username, league_name) => {
   })})
 }
 
+function insertAndShift(arr, from, to) {
+  let cutOut = arr.splice(from, 1) [0]; // cut the element at index 'from'
+  arr.splice(to, 0, cutOut);            // insert it at index 'to'
+}
+
 exports.miniLeaguePredictions = async (league_id, username) => {
   return await new Promise((resolve) => {
     MiniLeague.find({_id: league_id}).populate({path:'members', populate:{path: 'predictions', populate: {path: 'match'}}}).exec(async function (err, res) {
       if (err) throw err;
       var members = res[0]['members']
+      var myself_idx = members.findIndex((member) => member.username == username)
+      var myself = members.splice(myself_idx, 1)[0]
+      members.splice(0, 0, myself)
+      
       const currentGameweek = await getGameweek()
 
       var match_preds_obj = {'matches': [], 'members':[]}
