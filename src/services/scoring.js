@@ -172,6 +172,7 @@ exports.updateLiveScores = async () => {
 }
 
 exports.updateTodayGames = () => {
+  console.log('updating todays games')
   date = new Date().toISOString().split('T')[0];
   var options = {
     hostname: 'api.football-data.org',
