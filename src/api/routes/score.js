@@ -25,6 +25,11 @@ exports.score = (express) => {
     res.json();
   })
 
+  express.get('/updatetodayscores', (req,res) => {
+    live_scoring.updateTodayGames()
+    res.json()
+  })
+
   express.get('/scoregames',(req,res) => {
     scoreGames();
     res.json();
