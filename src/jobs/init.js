@@ -2,6 +2,7 @@ const generateTwoHoursScoreCheckingCron = require('./startMatch').startMatch
 const Match = require('../models/user').match
 const updateLiveScores = require("../services/scoring").updateLiveScores
 const updateFootballDataScores = require("../services/scoring").updateFootballDataScores
+const updateTodayGames = require("../services/scoring").updateTodayGames
 
 exports.init = async (agendaInstance) => {
   // DEBUG LINE NEXT
@@ -47,6 +48,7 @@ exports.init = async (agendaInstance) => {
       // Updates scores from football-data.org
       // This doesn't need to be run until the end of the game!
       updateFootballDataScores();
+      updateTodayGames()
     })
     var job = agendaInstance.every(minutes+' '+hours+' '+date+' '+month+' *', 'update scores in game '+hours+' '+minutes)
   }

@@ -171,6 +171,29 @@ exports.updateLiveScores = async () => {
   })
 }
 
+exports.updateTodayGames = () => {
+  date = new Date().toISOString().split('T')[0];
+  var options = {
+    hostname: 'api.football-data.org',
+    path: '/v2/competitions/PL/matches?dateFrom='+date+'&dateTo='+date,
+    method: 'GET',
+    headers: {
+      'X-Auth-Token': env['FOOTBALL_DATA_API_AUTH']
+    }
+  }
+  https.get(options, (res) => {
+    data = '';
+    res.on('data',(d) => {
+      data += d;
+    })
+    res.on('end', () => {
+      json = JSON.parse(data);
+      updateDBScoresFootballData(json)
+    })
+  })
+}
+
+
 exports.updateFootballDataScores = (optional_gameweek) => {
   console.info('updateFootballDataScores called')
   //var talkSport_week_num = await getTalkSportWeekNum();
