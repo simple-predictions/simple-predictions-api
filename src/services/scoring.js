@@ -189,6 +189,7 @@ exports.updateTodayGames = () => {
     })
     res.on('end', () => {
       json = JSON.parse(data);
+      console.log(JSON.stringify(json))
       updateDBScoresFootballData(json)
     })
   })
