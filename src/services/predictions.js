@@ -79,9 +79,9 @@ exports.getUserPredictions = async (username, gameweek, include_future) => {
             }
             // This prediction belongs to the current user
             match_obj.user_predictions.push(prediction)
-          } else {
+          } /*else {
             // This prediction doesn't belong to the current user
-          }
+          }*/
         }
 
         final_preds_arr.push(match_obj)
