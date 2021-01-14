@@ -8,6 +8,9 @@ exports.updateManyPredictions = async (username, json) => {
     var prediction = json[i]
     var home_pred = prediction['home_pred']
     var away_pred = prediction['away_pred']
+    if (isNaN(home_pred) || isNaN(away_pred) || home_pred.length == 0 || away_pred.length == 0) {
+      continue
+    }
     var game_id = prediction['game_id']
     this.updatePrediction(username, home_pred, away_pred, game_id)
   }
