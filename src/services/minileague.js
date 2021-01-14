@@ -105,7 +105,7 @@ exports.miniLeaguePredictions = async (league_id, username, gameweek) => {
 }
 
 exports.getMiniLeagues = async (username) => {
-  return await new Promise((resolve) => {
+  var ret_obj = await new Promise((resolve) => {
     User.findOne({username: username}, function(err, res) {
       if (err) throw err;
       const user_id = res['_id']
@@ -118,6 +118,16 @@ exports.getMiniLeagues = async (username) => {
       })
     })
   })
+
+  for (var i = 0; i < ret_obj.length; i++) {
+    ret_obj[i] = ret_obj[i].toObject()
+    var id = ret_obj[i]['_id']
+    const preds = await this.miniLeaguePredictions(id, username)
+    const table = await this.miniLeagueTable(id)
+    ret_obj[i]['table'] = preds
+    ret_obj[i]['rankings'] = table
+  }
+  return ret_obj
 }
 
 exports.miniLeagueTable = async (league_id) => {

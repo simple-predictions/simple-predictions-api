@@ -76,6 +76,8 @@ exports.getUserInfo = async (username) => {
   return await new Promise((resolve) => {
     User.findOne({username: username}, function (err, res) {
       if (err) throw err;
+    }).populate('friends').exec(function (err, res) {
+      if (err) throw err;
       resolve(res)
     })
   })
