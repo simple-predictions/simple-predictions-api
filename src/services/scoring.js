@@ -142,8 +142,8 @@ exports.updateLiveScores = async () => {
       var combined_score = home_score + away_score;
       // Split into team names
       var teams = final_tweet.split(/\s\d.*\d\s/)
-      home_team = teams[0]
-      away_team = teams[1].split(/ [^ ]*$/)[0]
+      var home_team = teams[0]
+      var away_team = teams[1].split(/ [^ ]*$/)[0]
       home_team = fixTeamNameProblems(home_team);
       away_team = fixTeamNameProblems(away_team);
       await new Promise((resolve, reject) => {
@@ -154,7 +154,7 @@ exports.updateLiveScores = async () => {
         } else {
         if (result['live_home_score']+result['live_away_score'] < combined_score || result['live_home_score'] == null) {
           // Update the score as it is greater than the previous score
-          id = result['_id'];
+          var id = result['_id'];
           console.log('set score in updatelivescores: '+home_team+' vs '+away_team+' to '+home_score+' - '+away_score)
           await new Promise((resolve, reject) => {Match.updateOne({_id:id}, { $set: {live_home_score: home_score, live_away_score: away_score}}, async function(err, result){
             if (err) throw err
@@ -174,7 +174,7 @@ exports.updateLiveScores = async () => {
 
 exports.updateTodayGames = () => {
   console.log('updating todays games')
-  date = new Date().toISOString().split('T')[0];
+  var date = new Date().toISOString().split('T')[0];
   var options = {
     hostname: 'api.football-data.org',
     path: '/v2/competitions/PL/matches?dateFrom='+date+'&dateTo='+date,
@@ -184,12 +184,12 @@ exports.updateTodayGames = () => {
     }
   }
   https.get(options, (res) => {
-    data = '';
+    var data = '';
     res.on('data',(d) => {
       data += d;
     })
     res.on('end', () => {
-      json = JSON.parse(data);
+      var json = JSON.parse(data);
       console.log(JSON.stringify(json))
       updateDBScoresFootballData(json)
     })
@@ -202,8 +202,8 @@ exports.updateFootballDataScores = (optional_gameweek) => {
   //var talkSport_week_num = await getTalkSportWeekNum();
   Match.findOne({}, async function(err, result){
     if (err) throw err;
-    home_team = result['home_team'];
-    away_team = result['away_team'];
+    var home_team = result['home_team'];
+    var away_team = result['away_team'];
     var teams = await getFootballDataIDs();
     function fixTeams(team){
       if (team=='Sheffield United') {team='Sheffield Utd'};
@@ -229,12 +229,12 @@ exports.updateFootballDataScores = (optional_gameweek) => {
       }
     }
     var matchday = await new Promise((resolve, reject) => https.get(options, (res) => {
-      data = '';
+      var data = '';
       res.on('data',(d) => {
         data += d;
       })
       res.on('end',() => {
-        json = JSON.parse(data)
+        var json = JSON.parse(data)
         var matchday = checkMatchday(json)
         resolve(matchday)
       })
@@ -251,12 +251,12 @@ exports.updateFootballDataScores = (optional_gameweek) => {
       }
     }
     https.get(options, (res) => {
-      data = '';
+      var data = '';
       res.on('data',(d) => {
         data += d;
       })
       res.on('end', () => {
-        json = JSON.parse(data);
+        var json = JSON.parse(data);
         updateDBScoresFootballData(json)
       })
     })
@@ -279,12 +279,12 @@ async function getFootballDataIDs(){
   }
   var teams = {}
   await new Promise((resolve, reject) => {https.get(options, (res) => {
-    data = '';
+    var data = '';
     res.on('data', (d) => {
       data += d;
     })
     res.on('end', () => {
-      json = JSON.parse(data)
+      var json = JSON.parse(data)
       for (var i = 0; i < json['teams'].length; i++) {
         var team_name = json['teams'][i]['shortName']
         var team_id = json['teams'][i]['id']
@@ -334,7 +334,7 @@ async function updateDBScoresFootballData(json) {
         }
         resolve()
       } else {
-      id = result['_id'];
+      var id = result['_id'];
       if (result['live_home_score']+result['live_away_score'] < combined_score || result['live_home_score'] == null || result['status'] == 'FINISHED') {
         // Update the score as it is greater than the previous score
         console.log('set score in updatedbfootballdata2 '+home_team+' vs '+away_team+' to '+home_score+' - '+away_score+' with id '+id)
