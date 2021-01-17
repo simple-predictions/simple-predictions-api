@@ -297,17 +297,17 @@ async function getFootballDataIDs(){
 }
 
 async function updateDBScoresFootballData(json) {
-  matches = json['matches'];
+  var matches = json['matches'];
   if (!matches) {
     throw ('Error: Matches not valid please check sentry ffs')
   }
   for (var i = 0;i < matches.length;i++) {
     match = matches[i]
-    home_team = match['homeTeam']['name'];
-    away_team = match['awayTeam']['name'];
-    home_score = match['score']['fullTime']['homeTeam']
-    away_score = match['score']['fullTime']['awayTeam']
-    status = match['status'];
+    var home_team = match['homeTeam']['name'];
+    var away_team = match['awayTeam']['name'];
+    var home_score = match['score']['fullTime']['homeTeam']
+    var away_score = match['score']['fullTime']['awayTeam']
+    var status = match['status'];
     home_team = fixTeamNameProblems(home_team);
     away_team = fixTeamNameProblems(away_team);
     combined_score = home_score + away_score;
