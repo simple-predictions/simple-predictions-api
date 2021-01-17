@@ -235,8 +235,8 @@ exports.updateFootballDataScores = (optional_gameweek) => {
       })
       res.on('end',() => {
         var json = JSON.parse(data)
-        var matchday = checkMatchday(json)
-        resolve(matchday)
+        var inner_matchday = checkMatchday(json)
+        resolve(inner_matchday)
       })
     }))
     // Use function param if given or alternatively use calculated current gameweek
@@ -302,7 +302,7 @@ async function updateDBScoresFootballData(json) {
     throw ('Error: Matches not valid please check sentry ffs')
   }
   for (var i = 0;i < matches.length;i++) {
-    match = matches[i]
+    var match = matches[i]
     var home_team = match['homeTeam']['name'];
     var away_team = match['awayTeam']['name'];
     var home_score = match['score']['fullTime']['homeTeam']
@@ -310,7 +310,7 @@ async function updateDBScoresFootballData(json) {
     var status = match['status'];
     home_team = fixTeamNameProblems(home_team);
     away_team = fixTeamNameProblems(away_team);
-    combined_score = home_score + away_score;
+    var combined_score = home_score + away_score;
     if ((home_team && away_team) && (home_score || home_score == 0) && (away_score || away_score == 0)) {
       console.log(`Currently checking in updateDBScoresFootballData for: ${home_team} vs ${away_team} with a final score of ${home_score}-${away_score}`)
     }
