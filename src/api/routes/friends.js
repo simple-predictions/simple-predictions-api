@@ -1,7 +1,7 @@
-const {addFriend, listFriends} = require('../../services/friends')
+const { addFriend, listFriends } = require('../../services/friends')
 const getUserPredictions = require('../../services/predictions').getUserPredictions
 
-exports.friends = (express) => {
+exports.friends = express => {
   express.post('/addfriend', async (req, res) => {
     if (!req.session.passport) {
       res.status(401)
@@ -9,18 +9,18 @@ exports.friends = (express) => {
       return
     }
 
-    const current_username = req.session.passport.user
-    const friend_username = req.body.username
-    if (current_username == friend_username) {
+    const currentUsername = req.session.passport.user
+    const friendUsername = req.body.username
+    if (currentUsername === friendUsername) {
       res.status(403)
       res.json('You cannot add yourself as a friend')
       return
     }
-    
+
     try {
-      var res_text = await addFriend(current_username, friend_username)
-      res.json(res_text)
-    } catch(err) {
+      const resText = await addFriend(currentUsername, friendUsername)
+      res.json(resText)
+    } catch (err) {
       res.status(403)
       res.json(err)
     }
@@ -32,11 +32,11 @@ exports.friends = (express) => {
       res.json()
       return
     }
-    
+
     const username = req.session.passport.user
 
-    const friends_list = await listFriends(username)
-    res.json(friends_list)
+    const friendsList = await listFriends(username)
+    res.json(friendsList)
   })
 
   express.get('/friendpredictions', async (req, res) => {
@@ -48,14 +48,14 @@ exports.friends = (express) => {
 
     const gameweek = req.query.gameweek || null
 
-    const friend_username = req.query.username
+    const friendUsername = req.query.username
 
-    if (friend_username == req.session.passport.user) {
-      const preds = await getUserPredictions(friend_username, gameweek, true)
+    if (friendUsername === req.session.passport.user) {
+      const preds = await getUserPredictions(friendUsername, gameweek, true)
+      res.json(preds)
     } else {
-      preds = await getUserPredictions(friend_username, gameweek)
+      const preds = await getUserPredictions(friendUsername, gameweek)
+      res.json(preds)
     }
-
-    res.json(preds)
   })
 }

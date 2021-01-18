@@ -1,14 +1,14 @@
-const auth_user = require('../../services/auth').auth_user
+const authUser = require('../../services/auth').auth_user
 const passport = require('passport')
 const User = require('../../models/user').user
 const getUserInfo = require('../../services/auth').getUserInfo
 const resetPassword = require('../../services/auth').resetPassword
 const createNewPassword = require('../../services/auth').createNewPassword
 
-exports.auth = (express) => {
+exports.auth = express => {
   express.post('/resetpassword', async (req, res) => {
     const username = req.body.username
-    if(!(username)) {
+    if (!(username)) {
       res.status(500)
       res.json('Not all parameters were provided.')
     }
@@ -44,8 +44,8 @@ exports.auth = (express) => {
     res.json('test')
   })
 
-  express.post('/login', passport.authenticate('local'), (req,res) => {
-    res.json(auth_user)
+  express.post('/login', passport.authenticate('local'), (req, res) => {
+    res.json(authUser)
   })
 
   express.post('/register', (req, res) => {
@@ -56,17 +56,17 @@ exports.auth = (express) => {
       res.status(500)
       res.json("You haven't provided a username, email and password.")
     }
-    User.register(new User({username: username, email: email}), password, function (err, user) {
-      if(err){
+    User.register(new User({ username: username, email: email }), password, function (err, user) {
+      if (err) {
         console.log(err)
         res.status(409)
         res.json(err)
         return
       }
-      passport.authenticate("local")(req, res, function(){
+      passport.authenticate('local')(req, res, function () {
         res.status(200)
         res.json()
-      });
+      })
     })
   })
 
@@ -78,7 +78,7 @@ exports.auth = (express) => {
     }
     const username = req.session.passport.user
 
-    userinfo = await getUserInfo(username)
-    res.json(userinfo)
+    const userInfo = await getUserInfo(username)
+    res.json(userInfo)
   })
 }

@@ -1,6 +1,6 @@
 const { joinMiniLeague, createMiniLeague, miniLeaguePredictions, getMiniLeagues, miniLeagueTable } = require('../../services/minileague')
 
-exports.minileague = (express) => {
+exports.minileague = express => {
   express.post('/createminileague', async (req, res) => {
     if (!req.session.passport) {
       res.status(401)
@@ -8,10 +8,10 @@ exports.minileague = (express) => {
       return
     }
     const username = req.session.passport.user
-    const league_name = req.body.league_name
-
+    const leagueName = req.body.league_name
+    let response
     try {
-      var response = await createMiniLeague(username, league_name)
+      response = await createMiniLeague(username, leagueName)
     } catch (err) {
       response = err
       res.status(403)
@@ -26,10 +26,11 @@ exports.minileague = (express) => {
       return
     }
     const username = req.session.passport.user
-    const league_name = req.body.league_name
+    const leagueName = req.body.league_name
+    let response
 
     try {
-      var response = await joinMiniLeague(username, league_name)
+      response = await joinMiniLeague(username, leagueName)
     } catch (err) {
       response = err
       res.status(403)
@@ -55,17 +56,17 @@ exports.minileague = (express) => {
       res.json()
       return
     }
-    
-    const league_id = req.query.league_id
+
+    const leagueID = req.query.league_id
     const username = req.session.passport.user
     const gameweek = req.query.gameweek
-    if (!league_id) {
+    if (!leagueID) {
       res.status(500)
-      res.json({members: [], matches: []})
+      res.json({ members: [], matches: [] })
       return
     }
 
-    const preds = await miniLeaguePredictions(league_id, username, gameweek)
+    const preds = await miniLeaguePredictions(leagueID, username, gameweek)
     res.json(preds)
   })
 
@@ -76,8 +77,8 @@ exports.minileague = (express) => {
       return
     }
 
-    const league_id = req.query.league_id
-    const table = await miniLeagueTable(league_id)
+    const leagueID = req.query.league_id
+    const table = await miniLeagueTable(leagueID)
     res.json(table)
   })
 }

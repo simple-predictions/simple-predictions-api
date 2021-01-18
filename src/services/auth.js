@@ -1,5 +1,5 @@
 const User = require('../models/user').user
-const nodemailer = require('nodemailer');
+const nodemailer = require('nodemailer')
 const env = require('dotenv').config().parsed || process.env
 const randomstring = require('randomstring')
 
@@ -32,14 +32,14 @@ exports.createNewPassword = (username, verificationToken, password) => {
   })
 }
 
-exports.resetPassword = (username) => {
+exports.resetPassword = username => {
   return new Promise((resolve, reject) => {
     User.findOne({ username: username }, async function (err, res) {
       if (err) throw err
       if (res) {
-        let verificationToken = randomstring.generate({
+        const verificationToken = randomstring.generate({
           length: 64
-        });
+        })
 
         User.updateOne({ username: username }, { verification_token: verificationToken }, function (err) {
           if (err) throw err
@@ -72,12 +72,12 @@ exports.resetPassword = (username) => {
   })
 }
 
-exports.getUserInfo = async (username) => {
-  return await new Promise((resolve) => {
-    User.findOne({username: username}, function (err, res) {
-      if (err) throw err;
+exports.getUserInfo = async username => {
+  return await new Promise(resolve => {
+    User.findOne({ username: username }, function (err, res) {
+      if (err) throw err
     }).populate('friends').exec(function (err, res) {
-      if (err) throw err;
+      if (err) throw err
       resolve(res)
     })
   })

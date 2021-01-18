@@ -1,6 +1,5 @@
-//const Agenda = require('agenda')
 const init = require('../jobs/init').init
 
-exports.jobs = ({agenda}) => {
+exports.jobs = ({ agenda }) => {
   init(agenda)
 }
