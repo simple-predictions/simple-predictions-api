@@ -24,14 +24,14 @@ exports.auth = (express) => {
 
   express.post('/createnewpassword', async (req, res) => {
     const username = req.body.username
-    const verification_token = req.body.verification_token
+    const verificationToken = req.body.verification_token
     const password = req.body.password
-    if (!(username && verification_token && password)) {
+    if (!(username && verificationToken && password)) {
       res.status(500)
       res.json('Not all parameters were provided')
     }
     try {
-      const response = await createNewPassword(username, verification_token, password)
+      const response = await createNewPassword(username, verificationToken, password)
       res.json(response)
     } catch (error) {
       const response = error

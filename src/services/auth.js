@@ -1,31 +1,31 @@
 const User = require('../models/user').user
 const nodemailer = require('nodemailer');
-const env = require('dotenv').config()['parsed'] || process.env;
-const randomstring = require("randomstring");
+const env = require('dotenv').config().parsed || process.env
+const randomstring = require('randomstring')
 
 exports.auth_user = () => {
   return 'Success'
 }
 
-exports.createNewPassword = (username, verification_token, password) => {
+exports.createNewPassword = (username, verificationToken, password) => {
   return new Promise((resolve, reject) => {
-    User.findOne({username: username}, function(err, res) {
+    User.findOne({ username: username }, function (err, res) {
       if (err) throw err
       if (res) {
-        console.log(res.verification_token, verification_token)
-        if (res.verification_token == verification_token) {
+        console.log(res.verification_token, verificationToken)
+        if (res.verification_token === verificationToken) {
           // Password can be reset
           console.log('gonna reset')
-          res.setPassword(password, function(err) {
+          res.setPassword(password, function (err) {
             if (err) throw err
             res.verification_token = null
-            res.save(function(err) {
+            res.save(function (err) {
               if (err) throw err
               resolve('Password updated. Please login using your new password.')
             })
           })
         } else {
-          reject("Verification token doesn't match")
+          reject(new Error("Verification token doesn't match"))
         }
       }
     })
@@ -34,18 +34,18 @@ exports.createNewPassword = (username, verification_token, password) => {
 
 exports.resetPassword = (username) => {
   return new Promise((resolve, reject) => {
-    User.findOne({username: username}, async function(err, res) {
+    User.findOne({ username: username }, async function (err, res) {
       if (err) throw err
       if (res) {
-        var verification_token = randomstring.generate({
+        let verificationToken = randomstring.generate({
           length: 64
         });
 
-        User.updateOne({username: username}, {verification_token: verification_token}, function(err) {
+        User.updateOne({ username: username }, { verification_token: verificationToken }, function (err) {
           if (err) throw err
         })
-        
-        const reset_link = 'http://www.saltbeefleague.co.uk/createnewpassword?verification_token='+verification_token+'&username='+username
+
+        const resetLink = 'http://www.saltbeefleague.co.uk/createnewpassword?verification_token=' + verificationToken + '&username=' + username
 
         const transporter = nodemailer.createTransport({
           service: 'gmail',
@@ -53,20 +53,20 @@ exports.resetPassword = (username) => {
             user: 'simplepredictions1@gmail.com',
             pass: env.GMAIL_PASSWORD
           }
-        });
-        
+        })
+
         const info = await transporter.sendMail({
-          from: "Simple Predictions <simplepredictions1@gmail.com>", // sender address
+          from: 'Simple Predictions <simplepredictions1@gmail.com>', // sender address
           to: res.email, // list of receivers
-          subject: "Password reset", // Subject line
-          html: "Please <a href='"+reset_link+"'>click here</a>", // html body
-        });
+          subject: 'Password reset', // Subject line
+          html: "Please <a href='" + resetLink + "'>click here</a>" // html body
+        })
 
         if (info) {
           resolve('Email sent')
         }
       } else {
-        reject('User not found.')
+        reject(new Error('User not found.'))
       }
     })
   })
