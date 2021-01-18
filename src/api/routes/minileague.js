@@ -12,11 +12,12 @@ exports.minileague = express => {
     let response
     try {
       response = await createMiniLeague(username, leagueName)
+      res.json(response)
     } catch (err) {
-      response = err
+      response = err.message
       res.status(403)
+      res.json(response)
     }
-    res.json(response)
   })
 
   express.post('/joinminileague', async (req, res) => {
@@ -31,11 +32,12 @@ exports.minileague = express => {
 
     try {
       response = await joinMiniLeague(username, leagueName)
+      res.json(response)
     } catch (err) {
-      response = err
+      response = err.message
       res.status(403)
+      res.json(response)
     }
-    res.json(response)
   })
 
   express.get('/minileagues', async (req, res) => {

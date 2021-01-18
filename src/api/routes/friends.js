@@ -22,7 +22,7 @@ exports.friends = express => {
       res.json(resText)
     } catch (err) {
       res.status(403)
-      res.json(err)
+      res.json(err.message)
     }
   })
 

@@ -16,7 +16,7 @@ exports.auth = express => {
       const response = await resetPassword(username)
       res.json(response)
     } catch (error) {
-      const response = error
+      const response = error.message
       res.status(500)
       res.json(response)
     }
@@ -34,7 +34,7 @@ exports.auth = express => {
       const response = await createNewPassword(username, verificationToken, password)
       res.json(response)
     } catch (error) {
-      const response = error
+      const response = error.message
       res.status(500)
       res.json(response)
     }
