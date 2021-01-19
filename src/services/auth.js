@@ -76,9 +76,27 @@ exports.getUserInfo = async username => {
   return await new Promise(resolve => {
     User.findOne({ username: username }, function (err, res) {
       if (err) throw err
-    }).populate('friends').exec(function (err, res) {
+    }).populate('friends').exec(async function (err, res) {
       if (err) throw err
+      const points = await exports.getUserTotalPoints(username)
+      res = res.toObject()
+      res.totalPoints = points
       resolve(res)
+    })
+  })
+}
+
+exports.getUserTotalPoints = async username => {
+  return await new Promise(resolve => {
+    User.findOne({ username }, function (err) { if (err) throw err }).populate('predictions').exec(function (err, res) {
+      if (err) throw err
+      console.log(res)
+      let totalPoints = 0
+      for (let i = 0; i < res.predictions.length; i++) {
+        const pred = res.predictions[i]
+        totalPoints += pred.points
+      }
+      resolve(totalPoints)
     })
   })
 }
