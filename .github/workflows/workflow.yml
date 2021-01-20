@@ -5,7 +5,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Generate coverage report
-      working-directory: ./
+      working-directory: ../
       run: |
         npm install
         npm run coverage
