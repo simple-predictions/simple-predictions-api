@@ -11,9 +11,7 @@ jobs:
         version: 3.7
     - name: Generate coverage report
       run: |
-        pip install pytest
-        pip install pytest-cov
-        pytest --cov=./ --cov-report=xml
+        npm run coverage
     - uses: codecov/codecov-action@v1
       with:
         file: ./coverage.xml
