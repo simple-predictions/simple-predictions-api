@@ -1,0 +1,2 @@
+steps:
+- uses: codecov/codecov-action@v1
