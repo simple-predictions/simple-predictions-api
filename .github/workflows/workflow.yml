@@ -3,6 +3,7 @@ jobs:
   codecov-tests:
     name: Run Codecov test suite
     runs-on: ubuntu-latest
+    working-directory: ../
     steps:
     - uses: actions/setup-node@v2
       with:
