@@ -1,6 +1,9 @@
 on: push
 jobs: 
   codecov-tests:
+    name: Run Codecov test suite
+    runs-on: ubuntu-latest
+    steps:
     - name: Generate coverage report
       run: |
         npm run coverage
