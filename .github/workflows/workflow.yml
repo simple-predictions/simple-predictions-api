@@ -2,5 +2,6 @@ on: push
 jobs: 
   codecov-tests:
     name: Run Codecov test suite
+    runs-on: ubuntu-latest
     steps:
     - uses: codecov/codecov-action@v1
