@@ -4,6 +4,9 @@ jobs:
     name: Run Codecov test suite
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/setup-node@v2
+      with:
+        node-version: '12'
     - name: Generate coverage report
       working-directory: ./
       run: |
