@@ -1,5 +1,6 @@
 const chai = require('chai')
 const chaiHttp = require('chai-http')
+const authUser = require('../src/services/auth.js').auth_user
 // const server = require('../app').server
 // const should = chai.should()
 
@@ -12,6 +13,7 @@ describe('Games', () => {
   */
     describe('/GET games', function(){
         it('it should GET all the games', function(done) {
+            authUser()
             done()
         })
     });

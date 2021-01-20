@@ -1,17 +1,6 @@
 on: push
 jobs: 
   codecov-tests:
-    name: Run Codecov test suite
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@master
-    - name: Setup Python  
-      uses: actions/setup-python@master
-      with:
-        version: 3.7
     - name: Generate coverage report
       run: |
         npm run coverage
-    - uses: codecov/codecov-action@v1
-      with:
-        file: ./coverage.xml
