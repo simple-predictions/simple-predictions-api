@@ -1,2 +1,4 @@
-steps:
-- uses: codecov/codecov-action@v1
+on: push
+jobs: 
+  - steps:
+    - uses: codecov/codecov-action@v1
