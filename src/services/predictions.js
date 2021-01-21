@@ -140,7 +140,7 @@ function calculateEarliestGameweek (json) {
       break
     }
     if (gameweek.status === 'U') {
-      if ((new Date(gameweek.from.millis)) - Date.now() < 259200000) {
+      if ((new Date(gameweek.from.millis)) - Date.now() < 559200000) { // Change back to 259200000
         gameweekNum = gameweek.gameweek
       } else {
         gameweekNum = gameweek.gameweek - 1
