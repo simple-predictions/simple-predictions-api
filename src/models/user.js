@@ -21,7 +21,9 @@ const PredictionSchema = new mongoose.Schema({
     ref: 'matches'
   },
   locked: { type: Boolean, default: false },
-  points: Number
+  points: Number,
+  banker: Boolean,
+  insurance: Boolean
 })
 
 const MatchSchema = new mongoose.Schema({

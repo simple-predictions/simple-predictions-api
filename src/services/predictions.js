@@ -4,46 +4,94 @@ const User = require('../models/user').user
 const https = require('https')
 
 exports.updateManyPredictions = async (username, json) => {
+  const promises = []
+  const specialPreds = []
   for (let i = 0; i < json.length; i++) {
     const prediction = json[i]
     const homePred = prediction.home_pred
     const awayPred = prediction.away_pred
+    const banker = prediction.banker
+    const insurance = prediction.insurance
     if (isNaN(homePred) || isNaN(awayPred) || homePred.length === 0 || awayPred.length === 0) {
       continue
     }
+    if (banker || insurance) {
+      specialPreds.push(prediction)
+      continue
+    }
     const gameID = prediction.game_id
-    this.updatePrediction(username, homePred, awayPred, gameID)
+    promises.push(this.updatePrediction(username, homePred, awayPred, gameID))
   }
+  Promise.all(promises).then(() => {
+    for (let i = 0; i < specialPreds.length; i++) {
+      const prediction = specialPreds[i]
+      const homePred = prediction.home_pred
+      const awayPred = prediction.away_pred
+      const banker = prediction.banker
+      const insurance = prediction.insurance
+      const gameID = prediction.game_id
+      if (insurance && banker) {
+        continue
+      }
+      this.updatePrediction(username, homePred, awayPred, gameID, banker, insurance)
+    }
+  })
 }
 
-exports.updatePrediction = (username, homePred, awayPred, gameID) => {
-  User.findOne({ username: username }, function (err, res) {
-    const userID = res._id
-    if (err) throw err
-    Match.findOne({ _id: gameID }).populate({ path: 'predictions' }).exec(function (err, match) {
+exports.updatePrediction = (username, homePred, awayPred, gameID, banker, insurance) => {
+  return new Promise(resolve => {
+    User.findOne({ username: username }, function (err, res) {
+      const userID = res._id
       if (err) throw err
-      if (new Date(match.kick_off_time).getTime() < Date.now()) {
-        console.log('You cannot modify your predictions after kick off')
-        return
-      }
-      const predictions = match.predictions
-      const exists = predictions.some(pred => String(pred.author) === String(userID))
-      if (!exists) {
-        Prediction.create({ home_pred: homePred, away_pred: awayPred, author: userID, match: match._id }, function (err, res) {
+      Match.findOne({ _id: gameID }).populate({ path: 'predictions', match: { author: userID } }).exec(function (err, match) {
+        if (err) throw err
+        const gameweek = match.gameweek
+        Match.find({ $and: [{ gameweek: gameweek }] }).populate({ path: 'predictions', match: { $and: [{ author: userID }, { $or: [{ banker: true }, { insurance: true }] }] } }).exec(function (err, otherGames) {
           if (err) throw err
-          User.updateOne({ _id: userID }, { $push: { predictions: res._id } }, function (err) {
-            if (err) throw err
-          })
-          Match.updateOne({ _id: gameID }, { $push: { predictions: res._id } }, function (err) {
-            if (err) throw err
-          })
+          otherGames = otherGames.filter(game => game.predictions.length > 0)
+          let insuranceCount = 0
+          let bankerCount = 0
+          for (let i = 0; i < otherGames.length; i++) {
+            if (otherGames[i]._id.toString() === gameID) continue
+            console.log('RUN')
+            if (otherGames[i].predictions[0].banker) { bankerCount += 1 }
+            if (otherGames[i].predictions[0].insurance) { insuranceCount += 1 }
+          }
+          if (insuranceCount > 1 || (insuranceCount === 1 && insurance)) {
+            console.log('INSURANCE CLEARED')
+            insurance = false
+          }
+          console.log('Banker info', bankerCount, banker)
+          if (bankerCount > 1 || (bankerCount === 1 && banker)) {
+            console.log('BANKER CLEARED')
+            banker = false
+          }
+          if (new Date(match.kick_off_time).getTime() < Date.now()) {
+            console.log('You cannot modify your predictions after kick off')
+            return
+          }
+          const prediction = match.predictions[0]
+          if (!prediction) {
+            Prediction.create({ home_pred: homePred, away_pred: awayPred, author: userID, match: match._id, banker: banker, insurance: insurance }, function (err, res) {
+              if (err) throw err
+              User.updateOne({ _id: userID }, { $push: { predictions: res._id } }, function (err) {
+                if (err) throw err
+              })
+              Match.updateOne({ _id: gameID }, { $push: { predictions: res._id } }, function (err) {
+                if (err) throw err
+              })
+              resolve()
+            })
+          } else {
+            const userPred = prediction
+            console.log(banker, insurance)
+            Prediction.updateOne({ _id: userPred._id }, { home_pred: homePred, away_pred: awayPred, author: userID, match: match._id, banker: banker, insurance: insurance }, function (err) {
+              if (err) throw err
+              resolve()
+            })
+          }
         })
-      } else {
-        const userPred = predictions.find(pred => String(pred.author) === String(userID))
-        Prediction.updateOne({ _id: userPred._id }, { home_pred: homePred, away_pred: awayPred, author: userID, match: match._id }, function (err) {
-          if (err) throw err
-        })
-      }
+      })
     })
   })
 }
