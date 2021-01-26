@@ -42,9 +42,9 @@ exports.scoreGames = () => {
           const bankerMult = game.banker_multiplier
           const banker = prediction.banker || false
           const insurance = prediction.insurance || false
-          const points = calculateScores(predHome, predAway, liveHome, liveAway, bankerMult, banker, insurance)
+          const points = calculateScores(predHome, predAway, liveHome, liveAway, banker, insurance, bankerMult)
           newData.$set.points = points
-
+          console.log(predID, newData)
           await new Promise(resolve => {
             Prediction.updateOne({ _id: predID }, newData, function (err, result) {
               if (err) throw err
@@ -60,7 +60,9 @@ exports.scoreGames = () => {
 
 const scoreGames = exports.scoreGames
 
-function calculateScores (predHome, predAway, liveHome, liveAway, bankerMult, banker, insurance) {
+function calculateScores (predHome, predAway, liveHome, liveAway, banker, insurance, bankerMult) {
+  // For now fixed banker mult
+  bankerMult = 3
   let points
   // Check if predictions present
   if (predHome == null || predAway == null || liveHome == null || liveAway == null) {
