@@ -279,18 +279,16 @@ async function updateDBScoresFootballData (json) {
             console.info('game status updated for ' + homeTeam + ' vs ' + awayTeam + ' to ' + status)
           })
         }
-        if (result == null || homeScore == null) {
-          if (result) {
-            if (homeScore == null && awayScore == null && result.kick_off_time < Date.now() && !(result.live_home_score > 0) && !(result.live_away_score > 0)) {
-              console.log('set score in updatedbfootballdata1 ' + homeTeam + ' vs ' + awayTeam + ' to 0-0')
-              await new Promise((resolve, reject) => {
-                Match.updateOne({ _id: result._id }, { $set: { live_home_score: 0, live_away_score: 0 } }, function (err, result) {
-                  if (err) throw err
-                  console.info('set scores to 0')
-                  resolve()
-                })
+        if (homeScore == null) {
+          if (homeScore == null && awayScore == null && result.kick_off_time < Date.now() && !(result.live_home_score > 0) && !(result.live_away_score > 0)) {
+            console.log('set score in updatedbfootballdata1 ' + homeTeam + ' vs ' + awayTeam + ' to 0-0')
+            await new Promise((resolve, reject) => {
+              Match.updateOne({ _id: result._id }, { $set: { live_home_score: 0, live_away_score: 0 } }, function (err, result) {
+                if (err) throw err
+                console.info('set scores to 0')
+                resolve()
               })
-            }
+            })
           }
           resolve()
         } else {
