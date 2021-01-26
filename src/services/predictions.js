@@ -96,15 +96,6 @@ exports.updatePrediction = (username, homePred, awayPred, gameID, banker, insura
   })
 }
 
-function test () {
-  return 2
-}
-function test2 () {
-  return 3
-}
-test()
-test2()
-
 exports.getUserPredictions = async (username, gameweek, includeFuture) => {
   const talksportGameweek = await this.getGameweek()
   return await new Promise(resolve => {
@@ -183,7 +174,7 @@ function calculateEarliestGameweek (json) {
   let gameweekNum
   for (let i = 0; i < gameweeks.length; i++) {
     const gameweek = gameweeks[i]
-    if (gameweek.status === 'L') {
+    if (gameweek.status === 'L' || gameweek.status === 'I') {
       gameweekNum = gameweek.gameweek
       break
     }
