@@ -15,7 +15,7 @@ exports.createNewPassword = (username, verificationToken, password) => {
         console.log(res.verification_token, verificationToken)
         if (res.verification_token === verificationToken) {
           // Password can be reset
-          console.log('gonna reset')
+          console.log('Will reset ' + username + "'s password")
           res.setPassword(password, function (err) {
             if (err) throw err
             res.verification_token = null
