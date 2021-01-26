@@ -6,6 +6,9 @@ const Sentry = require('@sentry/node')
 const environment = process.env.NODE_ENV || 'development'
 const Tracing = require('@sentry/tracing')
 const express = require('express')()
+const { stMonitor } = require('sematext-agent-express')
+
+stMonitor.start()
 
 Sentry.init({
   dsn: 'https://4fc238857c344c5f90ecc4b3ebcce7d6@o342120.ingest.sentry.io/5264910',

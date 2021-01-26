@@ -47,6 +47,7 @@
     "passport-local-mongoose": "^6.0.1",
     "randomstring": "^1.1.5",
     "raygun": "^0.11.1",
+    "sematext-agent-express": "^2.1.2",
     "sinon": "^9.2.3",
     "tunnel": "^0.0.6",
     "twit": "^2.2.11",
