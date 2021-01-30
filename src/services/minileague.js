@@ -138,7 +138,8 @@ exports.miniLeagueTable = async leagueID => {
       for (let i = 0; i < res.members.length; i++) {
         const memberPredictions = res.members[i].predictions
         const memberPoints = memberPredictions.reduce(function (prev, cur) {
-          return prev + cur.points
+          console.log(prev, cur.points, prev + cur.points)
+          return prev + (cur.points || 0)
         }, 0)
         members.push({ username: res.members[i].username, points: memberPoints })
       }
