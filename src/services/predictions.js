@@ -22,7 +22,7 @@ exports.updateManyPredictions = async (username, json) => {
     const gameID = prediction.game_id
     promises.push(this.updatePrediction(username, homePred, awayPred, gameID))
   }
-  Promise.all(promises).then(() => {
+  Promise.allSettled(promises).then(() => {
     for (let i = 0; i < specialPreds.length; i++) {
       const prediction = specialPreds[i]
       const homePred = prediction.home_pred
@@ -39,7 +39,7 @@ exports.updateManyPredictions = async (username, json) => {
 }
 
 exports.updatePrediction = (username, homePred, awayPred, gameID, banker, insurance) => {
-  return new Promise(resolve => {
+  return new Promise((resolve, reject) => {
     User.findOne({ username: username }, function (err, res) {
       const userID = res._id
       if (err) throw err
@@ -53,7 +53,6 @@ exports.updatePrediction = (username, homePred, awayPred, gameID, banker, insura
           let bankerCount = 0
           for (let i = 0; i < otherGames.length; i++) {
             if (otherGames[i]._id.toString() === gameID) continue
-            console.log('RUN')
             if (otherGames[i].predictions[0].banker) { bankerCount += 1 }
             if (otherGames[i].predictions[0].insurance) { insuranceCount += 1 }
           }
@@ -67,7 +66,7 @@ exports.updatePrediction = (username, homePred, awayPred, gameID, banker, insura
             banker = false
           }
           if (new Date(match.kick_off_time).getTime() < Date.now()) {
-            console.log('You cannot modify your predictions after kick off')
+            reject(new Error('You cannot modify your predictions after kick off'))
             return
           }
           const prediction = match.predictions[0]
