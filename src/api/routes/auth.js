@@ -4,6 +4,7 @@ const User = require('../../models/user').user
 const getUserInfo = require('../../services/auth').getUserInfo
 const resetPassword = require('../../services/auth').resetPassword
 const createNewPassword = require('../../services/auth').createNewPassword
+const setUserExpoToken = require('../../services/auth').setUserExpoToken
 
 exports.auth = express => {
   express.post('/resetpassword', async (req, res) => {
@@ -80,5 +81,18 @@ exports.auth = express => {
 
     const userInfo = await getUserInfo(username)
     res.json(userInfo)
+  })
+
+  express.post('/setexpopushtoken', async (req, res) => {
+    if (!req.session.passport) {
+      res.status(401)
+      res.json()
+      return
+    }
+    const username = req.session.passport.user
+
+    const token = req.body.token
+    const response = await setUserExpoToken(username, token)
+    res.json(response)
   })
 }

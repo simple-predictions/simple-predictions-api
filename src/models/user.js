@@ -6,7 +6,8 @@ const UserSchema = new mongoose.Schema({
   friends: [{ type: mongoose.Schema.Types.ObjectId, ref: 'users' }],
   email: String,
   active: Boolean,
-  verification_token: String
+  verification_token: String,
+  expoPushToken: String
 })
 
 const PredictionSchema = new mongoose.Schema({

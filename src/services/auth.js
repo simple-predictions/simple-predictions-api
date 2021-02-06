@@ -2,6 +2,7 @@ const User = require('../models/user').user
 const nodemailer = require('nodemailer')
 const env = require('dotenv').config().parsed || process.env
 const randomstring = require('randomstring')
+const ExpoSDK = require('expo-server-sdk').Expo
 
 exports.auth_user = () => {
   return 'Success'
@@ -98,5 +99,56 @@ exports.getUserTotalPoints = async username => {
       }
       resolve(totalPoints)
     })
+  })
+}
+
+exports.setUserExpoToken = async (username, expoPushToken) => {
+  return await new Promise(resolve => {
+    User.findOneAndUpdate({ username }, { expoPushToken }, function (err) {
+      if (err) throw err
+      resolve()
+    })
+  })
+}
+
+exports.sendExpoReminderNotifs = async gameweek => {
+  const message = `Please do your predictions for gameweek ${gameweek}`
+  const expo = new ExpoSDK({})
+  const messages = []
+
+  User.find({ expoPushToken: { $exists: true } }, function (err, res) {
+    if (err) throw err
+    for (let i = 0; i < res.length; i++) {
+      const pushToken = res[i].expoPushToken
+      messages.push({
+        to: pushToken,
+        sound: 'default',
+        title: 'Predictions reminder',
+        body: message,
+        data: { gameweek, url: 'saltbeef://predictions' }
+      })
+    }
+    console.log(messages)
+
+    const chunks = expo.chunkPushNotifications(messages)
+    const tickets = [];
+    (async () => {
+      // Send the chunks to the Expo push notification service. There are
+      // different strategies you could use. A simple one is to send one chunk at a
+      // time, which nicely spreads the load out over time:
+      for (const chunk of chunks) {
+        try {
+          const ticketChunk = await expo.sendPushNotificationsAsync(chunk)
+          console.log(ticketChunk)
+          tickets.push(...ticketChunk)
+          // NOTE: If a ticket contains an error code in ticket.details.error, you
+          // must handle it appropriately. The error codes are listed in the Expo
+          // documentation:
+          // https://docs.expo.io/push-notifications/sending-notifications/#individual-errors
+        } catch (error) {
+          console.error(error)
+        }
+      }
+    })()
   })
 }

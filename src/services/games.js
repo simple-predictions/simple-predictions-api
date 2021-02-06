@@ -34,6 +34,7 @@ function updateFixtures (json) {
     const awayTeam = game.teams[1].team.name
     const gameweek = game.gameweek.gameweek
     const kickOffTime = game.kickoff.millis
+    console.log(`${homeTeam} vs ${awayTeam} gw ${gameweek} millis ${kickOffTime}`)
 
     Match.findOneAndUpdate({ home_team: homeTeam, away_team: awayTeam }, { gameweek: gameweek, kick_off_time: kickOffTime }, { new: true, upsert: true, setDefaultsOnInsert: true, useFindAndModify: false }, function (err, res) {
       if (err) throw err

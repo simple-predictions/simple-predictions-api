@@ -3,12 +3,15 @@ const Match = require('../models/user').match
 const updateLiveScores = require('../services/scoring').updateLiveScores
 const updateFootballDataScores = require('../services/scoring').updateFootballDataScores
 const updateTodayGames = require('../services/scoring').updateTodayGames
+const https = require('https')
+const sendExpoReminderNotifs = require('../services/auth').sendExpoReminderNotifs
 
 exports.init = async agendaInstance => {
   // DEBUG LINE NEXT
   // updateFootballDataScores()
   agendaInstance.cancel({ repeatInterval: { $exists: true, $ne: null } })
   agendaInstance.start()
+  remindDoPreds(agendaInstance)
   generateTwoHoursScoreCheckingCron(agendaInstance, createScoreCheckingJobs)
   agendaInstance.start()
   console.info('replacing cron jobs')
@@ -58,4 +61,56 @@ exports.init = async agendaInstance => {
     job = jobs_arr[i];
     job.start()
   } */
+}
+
+const remindDoPreds = async agendaInstance => {
+  return await new Promise(resolve => {
+    const options = {
+      host: 'footballapi.pulselive.com',
+      path: '/football/compseasons/363/gameweeks',
+      method: 'GET',
+      port: 443,
+      headers: { Origin: 'https://www.premierleague.com' }
+    }
+
+    https.get(options, resp => {
+      let data = ''
+
+      resp.on('data', c => {
+        data += c
+      })
+
+      resp.on('end', () => {
+        const json = JSON.parse(data)
+        const gameweekNum = createRemindDoPredsJobs(json, agendaInstance)
+        resolve(gameweekNum)
+      })
+    })
+  })
+}
+
+const createRemindDoPredsJobs = (json, agendaInstance) => {
+  /* agendaInstance.define('test definition', () => {
+    sendExpoReminderNotifs(20)
+  })
+  agendaInstance.now('test definition') */
+  for (let i = 0; i < json.gameweeks.length; i++) {
+    const gameweek = json.gameweeks[i]
+    let time = gameweek.from.millis
+    time = new Date(time - 86400000)
+    if (Date.now() > time) {
+      continue
+    }
+    const minutes = time.getMinutes() + 2
+    const hours = time.getHours()
+    const date = time.getDate()
+    const month = time.getMonth()
+    const gameweekNum = i + 1
+
+    agendaInstance.define('send preds reminder notification ' + hours + ' ' + minutes + ' ' + date + ' ' + month, () => {
+      sendExpoReminderNotifs(gameweekNum)
+    })
+
+    agendaInstance.schedule(time, 'send preds reminder notification ' + hours + ' ' + minutes + ' ' + date + ' ' + month)
+  }
 }
