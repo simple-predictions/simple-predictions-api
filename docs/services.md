@@ -27,3 +27,22 @@ Finds a user with the given username. Gets the user or returns a `User not found
 Verifies the verification token passed matches the verification token stored in the user object or returns a `Verification token doesn't match` error.
 
 Updates the user's password and resets the verification token to null. Resolves the promise after the user is saved.
+
+### Get user info
+
+Parameters:
+
+- username (string)
+
+Finds a user with the given username and populates its friends.
+
+Calls [getUserTotalPoints](#Get%20user%20total%20points) and sets the user's total points to the response. Resolves the promise with the user object.
+
+### Set user expo token
+
+Parameters:
+
+- username (string)
+- expo push token (string)
+
+Find and update the user by username with the new expo push token and resolve the promise.
