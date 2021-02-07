@@ -52,9 +52,11 @@ Calls `User.register` with a new user object to register. Logs in with `passport
 ### User info `GET /userinfo`
 
 > Protected route
+
 Calls [getUserInfo](services.md#Get%20user%20info) and returns the response.
 
 ### Set Expo push token `POST /setexpopushtoken`
 
 > Protected route
+
 Calls [setUserExpoToken](services.md#Set%20user%20Expo%20token) and returns the response. 
