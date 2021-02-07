@@ -13,7 +13,6 @@ exports.createNewPassword = (username, verificationToken, password) => {
     User.findOne({ username: username }, function (err, res) {
       if (err) throw err
       if (res) {
-        console.log(res.verification_token, verificationToken)
         if (res.verification_token === verificationToken) {
           // Password can be reset
           console.log('Will reset ' + username + "'s password")
@@ -28,6 +27,8 @@ exports.createNewPassword = (username, verificationToken, password) => {
         } else {
           reject(new Error("Verification token doesn't match"))
         }
+      } else {
+        reject(new Error('User not found.'))
       }
     })
   })

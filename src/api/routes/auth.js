@@ -41,10 +41,6 @@ exports.auth = express => {
     }
   })
 
-  express.get('/test', (req, res) => {
-    res.json('test')
-  })
-
   express.post('/login', passport.authenticate('local'), (req, res) => {
     res.json(authUser)
   })
