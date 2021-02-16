@@ -15,6 +15,10 @@ const env = require('dotenv').config().parsed || process.env
 const expressSession = require('express-session')
 const MemoryStore = require('memorystore')(expressSession)
 
+const { ApolloServer } = require('apollo-server-express')
+
+const schema = require('./graphql')
+
 exports.routes = () => {
   const app = Router()
 
@@ -39,6 +43,10 @@ exports.routes = () => {
   passport.use(new LocalStrategy(User.authenticate()))
   passport.serializeUser(User.serializeUser())
   passport.deserializeUser(User.deserializeUser())
+
+  const server = new ApolloServer(schema)
+
+  server.applyMiddleware({ app })
 
   auth(app)
   generic(app)
