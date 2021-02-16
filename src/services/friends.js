@@ -3,12 +3,11 @@ const User = require('../models/user').user
 exports.addFriend = (currentUsername, friendUsername) => {
   return new Promise((resolve, reject) => {
     User.findOne({ username: friendUsername }, function (err, res) {
+      if (err) throw err
       if (res == null) {
         reject(new Error('Username not found'))
         return
       }
-      if (err) throw err
-      console.log(res, currentUsername, friendUsername)
       User.updateOne({ username: currentUsername }, { $addToSet: { friends: res._id } }, function (err, res) {
         if (err) {
           throw err

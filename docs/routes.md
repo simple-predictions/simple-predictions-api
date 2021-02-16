@@ -10,7 +10,7 @@ Request body parameters:
 
 Resets the user's password on an existing account. Firstly, verifies that a username is supplied. If not, status code 500 is returned.
 
-Calls [resetPassword](services.md#Reset%20password) and returns the response. If the response is an error, it is returned with status code 500.
+Calls [resetPassword](services.md#Reset-password) and returns the response. If the response is an error, it is returned with status code 500.
 
 ### Create new password `POST /createnewpassword`
 
@@ -22,7 +22,7 @@ Request body parameters:
 
 Creates a new password on an existing account. Firstly, verifies that a username, verification token and new password are supplied. If not, status code 500 is returned.
 
-Calls [createnewpassword](services.md#Create%20New%20Password) and returns the response. If the response is an error, it is returned with status code 500.
+Calls [createnewpassword](services.md#Create-new-password) and returns the response. If the response is an error, it is returned with status code 500.
 
 ### Login `POST /login`
 
@@ -53,10 +53,24 @@ Calls `User.register` with a new user object to register. Logs in with `passport
 
 > Protected route
 
-Calls [getUserInfo](services.md#Get%20user%20info) and returns the response.
+Calls [getUserInfo](services.md#Get-user-info) and returns the response.
 
 ### Set Expo push token `POST /setexpopushtoken`
 
 > Protected route
 
-Calls [setUserExpoToken](services.md#Set%20user%20Expo%20token) and returns the response. 
+Calls [setUserExpoToken](services.md#Set-user-Expo-token) and returns the response.
+
+## Friends Routes
+
+### Add friend `POST /addfriend`
+
+> Protected route
+
+Body parameters:
+
+- friend's username (string)
+
+Verifies that the friend's username doesn't equal the current user's username or returns error code 403.
+
+Calls [addFriend](services.md#Add-friend) and returns the response. If the response is an error, it is returned with status code 403.
