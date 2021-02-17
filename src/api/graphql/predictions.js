@@ -1,8 +1,8 @@
-const Match = require('../../models/user').match
 const { PredictionTC } = require('../../models/user.js')
+const { prediction, match, user } = require('../../models/user')
 
 const cleanPredictionObject = async (pred, rp) => {
-  const kickOffTime = (await Match.findOne({ _id: pred.match })).toObject().kick_off_time
+  const kickOffTime = (await match.findOne({ _id: pred.match })).toObject().kick_off_time
 
   if (pred.author !== rp.context.id && new Date(kickOffTime) > Date.now()) {
     pred.home_pred = undefined
@@ -49,4 +49,39 @@ exports.PredictionQuery = {
   predictionMany: PredictionTC.getResolver('findMany').wrapResolve(next => rp => {
     return predictionFindManyWrap(next, rp)
   })
+}
+
+exports.PredictionMutation = {
+  updatePrediction: {
+    type: PredictionTC,
+    args: { matchID: 'String!', home_pred: 'Int!', away_pred: 'Int!', banker: 'Boolean', insurance: 'Boolean' },
+    resolve: async (source, args, context, info) => {
+      // eslint-disable-next-line camelcase
+      const { kick_off_time, gameweek } = (await match.findOne({ _id: args.matchID }).select('kick_off_time gameweek -_id'))
+      if (new Date(kick_off_time) > Date.now()) {
+        return
+      }
+
+      const matches = await match.find({ gameweek }).populate({ path: 'predictions', match: { $and: [{ author: context.id }, { $or: [{ banker: true }, { insurance: true }] }] } }).exec()
+      const bankers = matches.some(match => match.predictions[0]?.banker && match._id.toString() !== args.matchID)
+      const insurances = matches.some(match => match.predictions[0]?.insurance && match._id.toString() !== args.matchID)
+      args.banker = bankers ? false : args.banker
+      args.insurance = insurances ? false : args.insurance
+      if (args.banker && args.insurance) {
+        args.banker = false
+        args.insurance = false
+      }
+
+      const updated = await prediction.findOneAndUpdate(
+        { match: args.matchID, author: context.id },
+        { home_pred: args.home_pred, away_pred: args.away_pred, banker: args.banker, insurance: args.insurance },
+        { upsert: true, new: true }
+      )
+
+      await match.updateOne({ _id: args.matchID }, { $addToSet: { predictions: updated._id } })
+      await user.updateOne({ _id: context.id }, { $addToSet: { predictions: updated._id } })
+
+      return updated
+    }
+  }
 }

@@ -1,5 +1,5 @@
 const { MatchTC, PredictionTC, UserTC } = require('../../models/user.js')
-const { PredictionQuery } = require('./predictions')
+const { PredictionQuery, PredictionMutation } = require('./predictions')
 const { UserQuery, UserMutation } = require('./user')
 const { MatchQuery } = require('./match')
 const { MinileagueQuery, MinileagueMutation } = require('./minileague')
@@ -83,7 +83,8 @@ schemaComposer.Query.addFields({
 
 schemaComposer.Mutation.addFields({
   ...UserMutation,
-  ...MinileagueMutation
+  ...MinileagueMutation,
+  ...PredictionMutation
 })
 
 // Put together a schema
