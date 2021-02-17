@@ -17,7 +17,7 @@ const MemoryStore = require('memorystore')(expressSession)
 
 const { ApolloServer } = require('apollo-server-express')
 
-const schema = require('./graphql')
+const schema = require('./graphql/index')
 
 exports.routes = () => {
   const app = Router()
