@@ -30,7 +30,22 @@ const PredictionQuery = {
     return res
   }),
   predictionOne: PredictionTC.getResolver('findOne'),
-  predictionMany: PredictionTC.getResolver('findMany')
+  predictionMany: PredictionTC.getResolver('findMany').wrapResolve(next => async rp => {
+    rp.projection.author = true
+    rp.projection.match = true
+    const res = await next(rp)
+
+    for (let i = 0; i < res.length; i++) {
+      const pred = res[i]
+      const kickOffTime = (await Match.findOne({ _id: pred.match })).toObject().kick_off_time
+      if (pred.author !== rp.context.id && new Date(kickOffTime) > Date.now()) {
+        res[i].home_pred = undefined
+        res[i].away_pred = undefined
+      }
+    }
+
+    return res
+  }),
 }
 
 const cleanUserObject = (user, rp) => {
