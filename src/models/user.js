@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const passportLocalMongoose = require('passport-local-mongoose')
+const { composeWithMongoose } = require('graphql-compose-mongoose')
 
 const UserSchema = new mongoose.Schema({
   predictions: [{ type: mongoose.Schema.Types.ObjectId, ref: 'predictions' }],
@@ -43,3 +44,7 @@ UserSchema.plugin(passportLocalMongoose)
 exports.user = mongoose.model('users', UserSchema)
 exports.prediction = mongoose.model('predictions', PredictionSchema)
 exports.match = mongoose.model('matches', MatchSchema)
+
+exports.MatchTC = composeWithMongoose(exports.match)
+exports.PredictionTC = composeWithMongoose(exports.prediction)
+exports.UserTC = composeWithMongoose(exports.user)
