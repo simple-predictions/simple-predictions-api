@@ -2,7 +2,7 @@ const { MatchTC, PredictionTC, UserTC } = require('../../models/user.js')
 const { PredictionQuery } = require('./predictions')
 const { UserQuery, UserMutation } = require('./user')
 const { MatchQuery } = require('./match')
-const { MinileagueQuery } = require('./minileague')
+const { MinileagueQuery, MinileagueMutation } = require('./minileague')
 const { SchemaComposer } = require('graphql-compose')
 const { MinileagueTC } = require('../../models/minileague.js')
 
@@ -82,7 +82,8 @@ schemaComposer.Query.addFields({
 })
 
 schemaComposer.Mutation.addFields({
-  ...UserMutation
+  ...UserMutation,
+  ...MinileagueMutation
 })
 
 // Put together a schema

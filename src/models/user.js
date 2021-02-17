@@ -5,6 +5,7 @@ const { composeWithMongoose } = require('graphql-compose-mongoose')
 const UserSchema = new mongoose.Schema({
   predictions: [{ type: mongoose.Schema.Types.ObjectId, ref: 'predictions' }],
   friends: [{ type: mongoose.Schema.Types.ObjectId, ref: 'users' }],
+  minileagues: [{ type: mongoose.Schema.Types.ObjectId, ref: 'minileagues' }],
   email: String,
   active: Boolean,
   verification_token: String,
