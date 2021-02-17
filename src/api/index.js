@@ -48,7 +48,9 @@ exports.routes = () => {
     const username = req.session.passport?.user || 'solly'
     const id = await User.findOne({ username })
     return { username, id: id._id }
-  } })
+  },
+  tracing: true
+  })
 
   server.applyMiddleware({ app })
 
