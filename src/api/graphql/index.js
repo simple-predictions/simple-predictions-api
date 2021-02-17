@@ -11,9 +11,14 @@ const schemaComposer = new SchemaComposer()
 MatchTC.addRelation(
   'predictions',
   {
-    resolver: PredictionQuery.predictionByIds,
+    resolver: PredictionQuery.predictionMany.addArgs({ user: 'String' }),
+    args: {
+      testArg: 0
+    },
     prepareArgs: {
-      _ids: source => source.predictions || []
+      filter: (source, args) => {
+        return { $and: [{ _id: { $in: source.predictions || [] } }, { author: args.user || { $exists: true } }] }
+      }
     },
     projection: { predictions: true }
   }

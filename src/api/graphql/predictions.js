@@ -23,6 +23,7 @@ const predictionFindOneWrap = async (next, rp) => {
 }
 
 const predictionFindManyWrap = async (next, rp) => {
+  rp.projection = rp.projection || {}
   rp.projection.author = true
   rp.projection.match = true
   const res = await next(rp)
