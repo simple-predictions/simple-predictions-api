@@ -15,6 +15,21 @@ const sortMatches = matches => {
   return matches.sort((a, b) => new Date(a.kick_off_time) - new Date(b.kick_off_time))
 }
 
+MatchTC.addFields({
+  locked: {
+    type: 'Boolean',
+    description: 'Whether predictions are locked',
+    resolve: async (source, args, context, info) => {
+      console.log(source)
+      if (new Date(source.kick_off_time) > Date.now()) {
+        return false
+      } else {
+        return true
+      }
+    }
+  }
+})
+
 exports.MatchQuery = {
   matchById: MatchTC.getResolver('findById'),
   matchByIds: MatchTC.getResolver('findByIds').wrapResolve(next => async rp => {
