@@ -59,7 +59,7 @@ exports.PredictionMutation = {
     resolve: async (source, args, context, info) => {
       // eslint-disable-next-line camelcase
       const { kick_off_time, gameweek } = (await match.findOne({ _id: args.matchID }).select('kick_off_time gameweek -_id'))
-      if (new Date(kick_off_time) > Date.now()) {
+      if (new Date(kick_off_time) < Date.now()) {
         return
       }
 
