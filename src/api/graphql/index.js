@@ -12,9 +12,6 @@ MatchTC.addRelation(
   'predictions',
   {
     resolver: PredictionQuery.predictionMany.addArgs({ user: 'String' }),
-    args: {
-      testArg: 0
-    },
     prepareArgs: {
       filter: (source, args) => {
         return { $and: [{ _id: { $in: source.predictions || [] } }, { author: args.user || { $exists: true } }] }
@@ -49,7 +46,7 @@ UserTC.addRelation(
 UserTC.addRelation(
   'predictions',
   {
-    resolver: PredictionQuery.predictionByIds,
+    resolver: PredictionQuery.predictionDataLoader.addArgs({ gameweek: 'Int' }),
     prepareArgs: {
       _ids: source => source.predictions || []
     },

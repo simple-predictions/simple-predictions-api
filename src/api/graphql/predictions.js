@@ -2,7 +2,13 @@ const { PredictionTC } = require('../../models/user.js')
 const { prediction, match, user } = require('../../models/user')
 
 const cleanPredictionObject = async (pred, rp) => {
-  const kickOffTime = (await match.findOne({ _id: pred.match })).toObject().kick_off_time
+  const { kick_off_time: kickOffTime, gameweek } = (await match.findOne({ _id: pred.match })).toObject()
+
+  if (rp.args.gameweek) {
+    if (rp.args.gameweek !== gameweek) {
+      return
+    }
+  }
 
   if (pred.author.toString() !== rp.context.id && new Date(kickOffTime) > Date.now()) {
     pred.home_pred = undefined
@@ -31,8 +37,10 @@ const predictionFindManyWrap = async (next, rp) => {
 
   for (let i = 0; i < res.length; i++) {
     let pred = res[i]
-    pred = cleanPredictionObject(pred, rp)
-    preds.push(pred)
+    pred = await cleanPredictionObject(pred, rp)
+    if (pred && pred.home_pred) {
+      preds.push(pred)
+    }
   }
   return preds
 }
@@ -48,6 +56,9 @@ exports.PredictionQuery = {
     return predictionFindOneWrap(next, rp)
   }),
   predictionMany: PredictionTC.getResolver('findMany').wrapResolve(next => rp => {
+    return predictionFindManyWrap(next, rp)
+  }),
+  predictionDataLoader: PredictionTC.getResolver('dataLoaderMany').wrapResolve(next => rp => {
     return predictionFindManyWrap(next, rp)
   })
 }
