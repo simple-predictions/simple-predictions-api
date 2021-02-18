@@ -44,12 +44,14 @@ exports.routes = () => {
   passport.serializeUser(User.serializeUser())
   passport.deserializeUser(User.deserializeUser())
 
-  const server = new ApolloServer({ schema, context: async ({req}) => {
-    const username = req.session.passport?.user || 'solly'
-    const id = await User.findOne({ username })
-    return { username, id: id._id.toString() }
-  },
-  tracing: true
+  const server = new ApolloServer({
+    schema,
+    context: async ({ req }) => {
+      const username = req.session.passport?.user || 'solly'
+      const id = await User.findOne({ username })
+      return { username, id: id._id.toString() }
+    },
+    tracing: true
   })
 
   server.applyMiddleware({ app })
