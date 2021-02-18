@@ -4,7 +4,7 @@ const { prediction, match, user } = require('../../models/user')
 const cleanPredictionObject = async (pred, rp) => {
   const kickOffTime = (await match.findOne({ _id: pred.match })).toObject().kick_off_time
 
-  if (pred.author !== rp.context.id && new Date(kickOffTime) > Date.now()) {
+  if (pred.author.toString() !== rp.context.id && new Date(kickOffTime) > Date.now()) {
     pred.home_pred = undefined
     pred.away_pred = undefined
   }
