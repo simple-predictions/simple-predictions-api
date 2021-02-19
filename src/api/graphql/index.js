@@ -4,17 +4,18 @@ const { UserQuery, UserMutation } = require('./user')
 const { MatchQuery } = require('./match')
 const { MinileagueQuery, MinileagueMutation } = require('./minileague')
 const { SchemaComposer } = require('graphql-compose')
-const { MinileagueTC } = require('../../models/minileague.js')
+const { MinileagueTC, minileague } = require('../../models/minileague.js')
 
 const schemaComposer = new SchemaComposer()
 
 MatchTC.addRelation(
   'predictions',
   {
-    resolver: PredictionQuery.predictionMany.addArgs({ user: 'String' }),
+    resolver: PredictionQuery.predictionMany.addArgs({ users: ['String'] }),
     prepareArgs: {
       filter: (source, args) => {
-        return { $and: [{ _id: { $in: source.predictions || [] } }, { author: args.user || { $exists: true } }] }
+        const author = args.users ? { $in: args.users } : { $exists: true }
+        return { $and: [{ _id: { $in: source.predictions || [] } }, { author }] }
       }
     },
     projection: { predictions: true }
