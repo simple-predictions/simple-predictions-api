@@ -4,7 +4,7 @@ const { UserQuery, UserMutation } = require('./user')
 const { MatchQuery } = require('./match')
 const { MinileagueQuery, MinileagueMutation } = require('./minileague')
 const { SchemaComposer } = require('graphql-compose')
-const { MinileagueTC, minileague } = require('../../models/minileague.js')
+const { MinileagueTC } = require('../../models/minileague.js')
 
 const schemaComposer = new SchemaComposer()
 
