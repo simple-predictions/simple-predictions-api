@@ -1,11 +1,11 @@
 /* eslint-disable */
-// const { MongoMemoryServer } = require('mongodb-memory-server')
-// const mongod = new MongoMemoryServer();
+const { MongoMemoryServer } = require('mongodb-memory-server')
+const mongod = new MongoMemoryServer();
 
 const chai = require('chai')
 const chaiHttp = require('chai-http')
-// const getUserInfo = require('../src/services/auth').getUserInfo
-// const mongoose = require('mongoose')
+const getUserInfo = require('../src/services/auth').getUserInfo
+const mongoose = require('mongoose')
 
 // const server = require('../app').server
 // const should = chai.should()
