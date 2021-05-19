@@ -126,7 +126,7 @@ exports.updateLiveScores = async () => {
       if (!tweetText) {
         continue
       }
-      if (!tweetText.includes('GOAL ')) {
+      if (!tweetText.startsWith('GOAL ')) {
         // Skips the iteration of this tweet
         continue
       }

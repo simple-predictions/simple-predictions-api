@@ -1,6 +1,6 @@
 # Services
 
-## Auth services
+## Auth Services
 
 ### Reset password
 
@@ -46,3 +46,16 @@ Parameters:
 - expo push token (string)
 
 Find and update the user by username with the new expo push token and resolve the promise.
+
+## Friends Services
+
+### Add friend
+
+Parameters:
+
+- currentUsername (string)
+- friendUsername (string)
+
+Finds a user with the friend's username. Gets the user or returns a `Username not found` error.
+
+Updates the user with the current username with `$addToSet: { friends: res._id }`. This adds the friend's id to the friends array. If the friend is already in the array, a `You are already following` error is returned.
