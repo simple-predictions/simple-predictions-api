@@ -2,9 +2,10 @@ const https = require('https')
 const Match = require('../models/user').match
 
 exports.games = () => {
+  console.log('Games called')
   const options = {
-    host: 'cors-anywhere.herokuapp.com',
-    path: '/https://footballapi.pulselive.com/football/fixtures?comps=1&teams=1,2,131,43,4,6,7,34,9,26,10,11,12,23,18,20,21,36,25,38&compSeasons=363&page=0&pageSize=1000&sort=asc&statuses=C,U,L&altIds=true',
+    host: 'footballapi.pulselive.com',
+    path: '/football/fixtures?comps=1&teams=1,2,131,43,4,6,7,34,9,26,10,11,12,23,18,20,21,36,25,38&compSeasons=363&page=0&pageSize=1000&sort=asc&statuses=C,U,L&altIds=true',
     method: 'GET',
     port: 443,
     headers: { Origin: 'https://www.premierleague.com' }
@@ -20,6 +21,10 @@ exports.games = () => {
     resp.on('end', () => {
       const json = JSON.parse(data)
       updateFixtures(json)
+    })
+
+    resp.on('error', e => {
+      console.log(e)
     })
   })
 }

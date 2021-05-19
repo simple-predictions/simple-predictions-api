@@ -5,6 +5,7 @@ const updateFootballDataScores = require('../services/scoring').updateFootballDa
 const updateTodayGames = require('../services/scoring').updateTodayGames
 const https = require('https')
 const sendExpoReminderNotifs = require('../services/auth').sendExpoReminderNotifs
+const updateFixtures = require('../services/games').games
 
 exports.init = async agendaInstance => {
   // DEBUG LINE NEXT
@@ -15,6 +16,7 @@ exports.init = async agendaInstance => {
   generateTwoHoursScoreCheckingCron(agendaInstance, createScoreCheckingJobs)
   agendaInstance.start()
   console.info('replacing cron jobs')
+  updateFixtures()
   let timesArr = []
   await new Promise((resolve, reject) => {
     Match.distinct('kick_off_time', function (err, result) {
