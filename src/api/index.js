@@ -55,11 +55,7 @@ exports.routes = () => {
   })
 
   server.applyMiddleware({
-    app,
-    cors: {
-      origin: 'https://www.saltbeefleague.co.uk/',
-      credentials: true
-    }
+    app
   })
 
   auth(app)
