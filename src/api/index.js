@@ -25,10 +25,14 @@ exports.routes = () => {
   app.use(bodyParser.json())
   app.use(bodyParser.urlencoded({ extended: true }))
 
+  const domain = env.CORS_DOMAIN
+
+  passport.use(new LocalStrategy(User.authenticate()))
+  passport.serializeUser(User.serializeUser())
+  passport.deserializeUser(User.deserializeUser())
+
   app.use(passport.initialize())
   app.use(passport.session())
-
-  const domain = env.CORS_DOMAIN
 
   app.use(expressSession({
     secret: env.SESSION_SECRET,
@@ -40,10 +44,6 @@ exports.routes = () => {
     })
   }))
 
-  passport.use(new LocalStrategy(User.authenticate()))
-  passport.serializeUser(User.serializeUser())
-  passport.deserializeUser(User.deserializeUser())
-
   const server = new ApolloServer({
     schema,
     context: async ({ req }) => {
@@ -54,7 +54,7 @@ exports.routes = () => {
     tracing: true
   })
 
-  server.applyMiddleware({ app })
+  server.applyMiddleware({ app, cors: 'https://www.saltbeefleague.co.uk' })
 
   auth(app)
   generic(app)
