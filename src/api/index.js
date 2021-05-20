@@ -55,7 +55,8 @@ exports.routes = () => {
   })
 
   server.applyMiddleware({
-    app
+    app,
+    cors: false
   })
 
   auth(app)
