@@ -54,7 +54,7 @@ exports.routes = () => {
     tracing: true
   })
 
-  server.applyMiddleware({ app, cors: 'https://www.saltbeefleague.co.uk' })
+  server.applyMiddleware({ app, cors: false })
 
   auth(app)
   generic(app)
