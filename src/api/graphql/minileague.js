@@ -5,7 +5,20 @@ exports.MinileagueQuery = {
   minileagueById: MinileagueTC.getResolver('findById'),
   minileagueByIds: MinileagueTC.getResolver('findByIds'),
   minileagueOne: MinileagueTC.getResolver('findOne'),
-  minileagueMany: MinileagueTC.getResolver('findMany')
+  minileagueMany: MinileagueTC.getResolver('findMany').wrapResolve(next => async rp => {
+    rp.projection.members = true
+    const res = await next(rp)
+    const leagues = []
+    console.log(res)
+    for (let i = 0; i < res.length; i++) {
+      console.log(res[i].members)
+      console.log(rp.context.id)
+      if (res[i].members.includes(rp.context.id)) {
+        leagues.push(res[i])
+      }
+    }
+    return leagues
+  })
 }
 
 exports.MinileagueMutation = {
