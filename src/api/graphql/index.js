@@ -5,6 +5,7 @@ const { MatchQuery } = require('./match')
 const { MinileagueQuery, MinileagueMutation } = require('./minileague')
 const { SchemaComposer } = require('graphql-compose')
 const { MinileagueTC } = require('../../models/minileague.js')
+const { getGameweek } = require('../../services/predictions.js')
 
 const schemaComposer = new SchemaComposer()
 
@@ -77,11 +78,29 @@ MinileagueTC.addRelation(
   }
 )
 
+const GameweekTC = schemaComposer.createObjectTC({
+  name: 'Gameweek',
+  fields: {
+    number: 'Int!'
+  }
+})
+
+const GameweekResolver = schemaComposer.createResolver({
+  name: 'findGameweek',
+  type: GameweekTC,
+  resolve: async () => {
+    const number = await getGameweek()
+    console.log({ number })
+    return { number }
+  }
+})
+
 schemaComposer.Query.addFields({
   ...MatchQuery,
   ...PredictionQuery,
   ...UserQuery,
-  ...MinileagueQuery
+  ...MinileagueQuery,
+  findGameweek: GameweekResolver
 })
 
 schemaComposer.Mutation.addFields({
