@@ -42,7 +42,7 @@ const predictionFindManyWrap = async (next, rp) => {
   for (let i = 0; i < res.length; i++) {
     let pred = res[i]
     pred = await cleanPredictionObject(pred, rp)
-    if (pred && pred.home_pred) {
+    if (pred && (pred.home_pred || pred.home_pred === 0)) {
       preds.push(pred)
     }
   }
