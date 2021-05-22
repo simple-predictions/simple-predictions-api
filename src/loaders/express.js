@@ -1,6 +1,5 @@
 const routes = require('../api').routes
 const cors = require('cors')
-const env = require('dotenv').config().parsed || process.env
 
 exports.app = ({ app, agendaInstance }) => {
   app.get('/status', (req, res) => {
