@@ -9,7 +9,6 @@ exports.init = async agendaInstance => {
   // DEBUG LINE NEXT
   // updateFootballDataScores()
   agendaInstance.cancel({ repeatInterval: { $exists: true, $ne: null } })
-  agendaInstance.start()
   generateTwoHoursScoreCheckingCron(agendaInstance, createScoreCheckingJobs)
   agendaInstance.start()
   console.info('replacing cron jobs')
@@ -32,7 +31,7 @@ exports.init = async agendaInstance => {
     } */
     // Run 2 minutes later than specified
     const minutes = datetime.getMinutes() + 2
-    const hours = datetime.getHours()
+    const hours = datetime.getHours() + 1 // Control for UTC time
     const date = datetime.getDate()
     const month = datetime.getMonth()
     agendaInstance.define('game start job ' + time, agendaInstance => {
