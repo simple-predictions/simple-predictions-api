@@ -19,8 +19,8 @@
   "homepage": "https://github.com/sol-austin/simple-predictions-api#readme",
   "dependencies": {
     "@babel/node": "^7.10.5",
-    "@sentry/node": "^5.17.0",
-    "@sentry/tracing": "^6.1.0",
+    "@sentry/node": "^6.4.1",
+    "@sentry/tracing": "^6.4.1",
     "agenda": "^3.1.0",
     "apollo-server": "^2.21.0",
     "apollo-server-express": "^2.0.0",
