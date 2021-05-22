@@ -7,7 +7,7 @@ exports.app = ({ app, agendaInstance }) => {
     res.status(200).end()
   })
 
-  app.use(cors({ origin: env.CORS_URL, credentials: true }))
+  app.use(cors({ origin: ['https://www.saltbeefleague.co.uk', 'http://192.168.0.22:3000', 'https://studio.apollographql.com'], credentials: true }))
 
   // Load API Routes
   app.use('/', routes(agendaInstance))
