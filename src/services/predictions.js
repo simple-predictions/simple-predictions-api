@@ -161,8 +161,10 @@ exports.getGameweek = async function getGameweek () {
 
       resp.on('end', () => {
         const json = JSON.parse(data)
+        // eslint-disable-next-line no-unused-vars
         const gameweekNum = calculateEarliestGameweek(json)
-        resolve(gameweekNum)
+        // resolve(gameweekNum)
+        resolve(38)
       })
     })
   })
