@@ -50,12 +50,13 @@ exports.resetPassword = username => {
         const resetLink = 'http://www.saltbeefleague.co.uk/createnewpassword?verification_token=' + verificationToken + '&username=' + username
         console.log('pre transport')
         const transporter = nodemailer.createTransport({
-          service: 'gmail',
+          host: 'smtp.sendgrid.net',
+          port: 587,
+          secure: false,
           auth: {
-            user: 'simplepredictions1@gmail.com',
-            pass: env.GMAIL_PASSWORD
-          },
-          port: 2525
+            user: 'apikey',
+            pass: env.SENDGRID_PASS
+          }
         })
         console.log('post transport', res)
         const setup = {
