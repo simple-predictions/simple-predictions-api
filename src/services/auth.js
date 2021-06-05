@@ -58,12 +58,14 @@ exports.resetPassword = username => {
           port: 2525
         })
         console.log('post transport', res)
-        const info = await transporter.sendMail({
+        const setup = {
           from: 'Simple Predictions <simplepredictions1@gmail.com>', // sender address
           to: res.email, // list of receivers
           subject: 'Password reset', // Subject line
           html: "Please <a href='" + resetLink + "'>click here</a>" // html body
-        })
+        }
+        console.log(setup)
+        const info = await transporter.sendMail(setup)
         console.log('post send')
 
         if (info) {
