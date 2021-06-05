@@ -54,7 +54,8 @@ exports.resetPassword = username => {
           auth: {
             user: 'simplepredictions1@gmail.com',
             pass: env.GMAIL_PASSWORD
-          }
+          },
+          port: 2525
         })
         console.log('post transport', res)
         const info = await transporter.sendMail({
