@@ -60,7 +60,7 @@ exports.resetPassword = username => {
         })
         console.log('post transport', res)
         const setup = {
-          from: 'Simple Predictions <simplepredictions1@gmail.com>', // sender address
+          from: 'admin@saltbeefleague.co.uk', // sender address
           to: res.email, // list of receivers
           subject: 'Password reset', // Subject line
           html: "Please <a href='" + resetLink + "'>click here</a>" // html body
