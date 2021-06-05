@@ -43,7 +43,7 @@
     "memorystore": "^1.6.4",
     "mongodb": "^3.5.8",
     "mongodb-memory-server": "^6.9.3",
-    "mongoose": "^5.10.3",
+    "mongoose": "^5.12.13",
     "monitor": "^0.6.10",
     "nodemailer": "^6.4.17",
     "nyc": "^15.1.0",
