@@ -1,7 +1,6 @@
 const User = require('../models/user').user
 const nodemailer = require('nodemailer')
 const env = require('dotenv').config().parsed || process.env
-console.log(env)
 const randomstring = require('randomstring')
 const ExpoSDK = require('expo-server-sdk').Expo
 
@@ -49,7 +48,7 @@ exports.resetPassword = username => {
         })
 
         const resetLink = 'http://www.saltbeefleague.co.uk/createnewpassword?verification_token=' + verificationToken + '&username=' + username
-
+        console.log('pre transport')
         const transporter = nodemailer.createTransport({
           service: 'gmail',
           auth: {
@@ -57,13 +56,14 @@ exports.resetPassword = username => {
             pass: env.GMAIL_PASSWORD
           }
         })
-
+        console.log('post transport')
         const info = await transporter.sendMail({
           from: 'Simple Predictions <simplepredictions1@gmail.com>', // sender address
           to: res.email, // list of receivers
           subject: 'Password reset', // Subject line
           html: "Please <a href='" + resetLink + "'>click here</a>" // html body
         })
+        console.log('post send')
 
         if (info) {
           resolve('Email sent')
