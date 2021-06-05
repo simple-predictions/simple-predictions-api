@@ -13,4 +13,6 @@ jobs:
         node-version: '12'
     - run: npm install
     - run: npm test
+      env: 
+        GMAIL_PASSWORD: ${{ env.GMAIL_PASSWORD }}
     - run: npm run coverage
