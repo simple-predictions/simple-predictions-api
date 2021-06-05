@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "mocha",
+    "test": "mocha --timeout 60000",
     "coverage": "npx nyc report --reporter=text-lcov > coverage.lcov && npx codecov"
   },
   "repository": {
