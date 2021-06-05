@@ -14,5 +14,5 @@ jobs:
     - run: npm install
     - run: npm test
       env: 
-        GMAIL_PASSWORD: ${{ env.GMAIL_PASSWORD }}
+        GMAIL_PASSWORD: ${{ secrets.GMAIL_PASSWORD }}
     - run: npm run coverage
