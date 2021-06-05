@@ -1,6 +1,7 @@
 const User = require('../models/user').user
 const nodemailer = require('nodemailer')
 const env = require('dotenv').config().parsed || process.env
+console.log(env)
 const randomstring = require('randomstring')
 const ExpoSDK = require('expo-server-sdk').Expo
 
