@@ -31,13 +31,19 @@ describe('user', function() {
             const passwordRes = await createNewPassword('sol', 'stub', 'newpassword')
             expect(passwordRes).to.equal('Password updated. Please login using your new password.')
         })
+        it("cannot reset password with incorrect verification token", async function() {
+            await createNewPassword('sol', 'incorrecttoken', 'newpassword').should.be.rejectedWith("Verification token doesn't match")
+        })
     })
     describe('that does not exist', function() {
         it("cannot be read", async function() {
             await getUserInfo('sol').should.be.rejectedWith('User not found')
         })
-        it("cannot reset password", async function() {
+        it("cannot request password reset", async function() {
             await resetPassword('sol').should.be.rejectedWith('User not found')
+        })
+        it("cannot reset password", async function() {
+            await createNewPassword('sol', 'stub', 'newpassword').should.be.rejectedWith('User not found')
         })
     })
 })
