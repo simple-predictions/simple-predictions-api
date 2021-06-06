@@ -76,11 +76,15 @@ exports.resetPassword = username => {
 }
 
 exports.getUserInfo = async username => {
-  return await new Promise(resolve => {
+  return await new Promise((resolve, reject) => {
     User.findOne({ username: username }, function (err, res) {
       if (err) throw err
     }).populate('friends').exec(async function (err, res) {
       if (err) throw err
+      if (res == null) {
+        console.log('about to reject')
+        return reject(new Error('User not found'))
+      }
       const points = await exports.getUserTotalPoints(username)
       res = res.toObject()
       res.totalPoints = points
@@ -93,7 +97,6 @@ exports.getUserTotalPoints = async username => {
   return await new Promise(resolve => {
     User.findOne({ username }, function (err) { if (err) throw err }).populate('predictions').exec(function (err, res) {
       if (err) throw err
-      console.log(res)
       let totalPoints = 0
       for (let i = 0; i < res.predictions.length; i++) {
         const pred = res.predictions[i]

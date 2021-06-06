@@ -38,6 +38,7 @@ const clearDatabase = async () => {
 // const server = require('../app').server
 chai.should()
 chai.use(chaiHttp)
+chai.use(require('chai-as-promised'))
 // Our parent block
 before(async () => await connect());
 

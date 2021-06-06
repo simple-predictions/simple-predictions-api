@@ -4,13 +4,13 @@ const User = require('../src/models/user').user
 
 const { createMiniLeague } = require('../src/services/minileague');
 const { resetPassword, createNewPassword, getUserInfo } = require('../src/services/auth');
-const { expect } = require('chai');
+const { expect, assert } = require('chai');
 
 describe('user', function() {
     it("can be created", async function() {
         await User.register(new User({ username: 'sol', email: 'solomonabrahams100@gmail.com' }), 'testpass')
     })
-    describe('read', function() {
+    describe('that already exists', function() {
         beforeEach(async () => {
             await User.register(new User({ username: 'sol', email: 'solomonabrahams100@gmail.com' }), 'testpass').catch(err => {
                 // Ignore error as user may have already been created
@@ -26,6 +26,11 @@ describe('user', function() {
             await User.updateOne({ username: 'sol' }, { verification_token: 'stub' })
             const passwordRes = await createNewPassword('sol', 'stub', 'newpassword')
             expect(passwordRes).to.equal('Password updated. Please login using your new password.')
+        })
+    })
+    describe('that does not exist', function() {
+        it("cannot be read", async function() {
+            await getUserInfo('sol').should.be.rejectedWith('User not found')
         })
     })
 })

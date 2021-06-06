@@ -27,6 +27,7 @@
     "bcryptjs": "^2.4.3",
     "bunyan": "^1.8.12",
     "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
     "chai-http": "^4.3.0",
     "codecov": "^3.8.2",
     "cors": "^2.8.5",
