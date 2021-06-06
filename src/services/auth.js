@@ -63,7 +63,10 @@ exports.resetPassword = username => {
           subject: 'Password reset', // Subject line
           html: "Please <a href='" + resetLink + "'>click here</a>" // html body
         }
-        const info = await transporter.sendMail(setup)
+        let info
+        if (env.NODE_ENV === 'production') {
+          info = await transporter.sendMail(setup)
+        }
 
         if (info) {
           resolve('Email sent')
