@@ -86,7 +86,6 @@ exports.getUserInfo = async username => {
     }).populate('friends').exec(async function (err, res) {
       if (err) throw err
       if (res == null) {
-        console.log('about to reject')
         return reject(new Error('User not found'))
       }
       const points = await exports.getUserTotalPoints(username)
