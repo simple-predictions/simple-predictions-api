@@ -64,6 +64,7 @@ exports.resetPassword = username => {
           html: "Please <a href='" + resetLink + "'>click here</a>" // html body
         }
         let info
+        /* istanbul ignore if */
         if (env.NODE_ENV === 'production') {
           info = await transporter.sendMail(setup)
         }

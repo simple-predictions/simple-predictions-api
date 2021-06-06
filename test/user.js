@@ -32,5 +32,8 @@ describe('user', function() {
         it("cannot be read", async function() {
             await getUserInfo('sol').should.be.rejectedWith('User not found')
         })
+        it("cannot reset password", async function() {
+            await resetPassword('sol').should.be.rejectedWith('User not found')
+        })
     })
 })
