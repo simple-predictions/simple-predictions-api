@@ -15,7 +15,6 @@ jobs:
     - run: npm test
       env: 
         SENDGRID_PASS: ${{ secrets.SENDGRID_PASS }}
-    - run: npm run coverage
-    - uses: codecov/codecov-action@v1
+    - uses: codecov/codecov-action@v1.5.0
       with:
         verbose: true
