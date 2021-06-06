@@ -3,10 +3,14 @@
 const User = require('../src/models/user').user
 
 const { createMiniLeague } = require('../src/services/minileague');
-const { resetPassword, createNewPassword, getUserInfo } = require('../src/services/auth');
+const { resetPassword, createNewPassword, getUserInfo, auth_user } = require('../src/services/auth');
 const { expect, assert } = require('chai');
 
 describe('user', function() {
+    it("can login", async function() {
+        auth_user().should.equal("Success")
+    })
+
     it("can be created", async function() {
         await User.register(new User({ username: 'sol', email: 'solomonabrahams100@gmail.com' }), 'testpass')
     })
