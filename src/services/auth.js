@@ -68,7 +68,7 @@ exports.resetPassword = username => {
           info = await transporter.sendMail(setup)
         }
 
-        if (info) {
+        if (info || env.NODE_ENV !== 'production') {
           resolve('Email sent')
         }
       } else {
