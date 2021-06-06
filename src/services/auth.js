@@ -48,7 +48,6 @@ exports.resetPassword = username => {
         })
 
         const resetLink = 'http://www.saltbeefleague.co.uk/createnewpassword?verification_token=' + verificationToken + '&username=' + username
-        console.log('pre transport')
         const transporter = nodemailer.createTransport({
           host: 'smtp.sendgrid.net',
           port: 587,
@@ -58,16 +57,13 @@ exports.resetPassword = username => {
             pass: env.SENDGRID_PASS
           }
         })
-        console.log('post transport', res)
         const setup = {
           from: 'admin@saltbeefleague.co.uk', // sender address
           to: res.email, // list of receivers
           subject: 'Password reset', // Subject line
           html: "Please <a href='" + resetLink + "'>click here</a>" // html body
         }
-        console.log(setup)
         const info = await transporter.sendMail(setup)
-        console.log('post send')
 
         if (info) {
           resolve('Email sent')

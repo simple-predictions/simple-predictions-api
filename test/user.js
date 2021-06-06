@@ -20,15 +20,11 @@ describe('user', function() {
             await getUserInfo('sol')
         })
         it("can reset password", async function() {
-            console.log('pre pass')
             const emailRes = await resetPassword('sol')
-            console.log('post pass')
             expect(emailRes).to.equal('Email sent')
 
             await User.updateOne({ username: 'sol' }, { verification_token: 'stub' })
-            console.log('pre res')
             const passwordRes = await createNewPassword('sol', 'stub', 'newpassword')
-            console.log('post res')
             expect(passwordRes).to.equal('Password updated. Please login using your new password.')
         })
     })
