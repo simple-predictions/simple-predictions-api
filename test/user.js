@@ -2,10 +2,9 @@
 
 const User = require('../src/models/user').user
 
-const { createMiniLeague } = require('../src/services/minileague');
 const { resetPassword, createNewPassword, getUserInfo, auth_user } = require('../src/services/auth');
-const { addFriend } = require('../src/services/friends')
-const { expect, assert } = require('chai');
+const { addFriend, listFriends } = require('../src/services/friends')
+const { expect } = require('chai');
 
 describe('user', function() {
     it("can login", async function() {
@@ -49,9 +48,15 @@ describe('user', function() {
                 await addFriend('sol', 'fakefriend').should.be.rejectedWith('Username not found')
             })
             it("cannot add friends twice", async function() {
-                await User.updateOne({ username: 'sol'}, { friends: [] })
                 await addFriend('sol', 'friend1')
                 await addFriend('sol', 'friend1').should.be.rejectedWith('You are already following friend1')
+            })
+            it("can list friends when added", async function() {
+                await addFriend('sol', 'friend1')
+                await listFriends('sol').should.eventually.have.lengthOf.above(1)
+            })
+            it("cannot list friends when not added", async function() {
+                await listFriends('sol').should.eventually.have.lengthOf(1)
             })
         })
     })
