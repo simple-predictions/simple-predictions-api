@@ -9,14 +9,11 @@ exports.addFriend = (currentUsername, friendUsername) => {
         return
       }
       User.updateOne({ username: currentUsername }, { $addToSet: { friends: res._id } }, function (err, res) {
-        if (err) {
-          throw err
+        if (err) throw err
+        if (res.nModified === 1) {
+          resolve('Success')
         } else {
-          if (res.nModified === 1) {
-            resolve('Success')
-          } else {
-            reject(new Error('You are already following ' + friendUsername))
-          }
+          reject(new Error('You are already following ' + friendUsername))
         }
       })
     })
