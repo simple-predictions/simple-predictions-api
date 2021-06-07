@@ -16,8 +16,10 @@ describe('user', function() {
     })
     describe('that already exists', function() {
         beforeEach((done) => {
+            console.info('presubmit')
             User.register(new User({ username: 'sol', email: 'solomonabrahams100@gmail.com' }), 'testpass', function(err, res) {
                 done()
+                console.info('postsubmit')
             })
         })
         it("can be read", async function() {
