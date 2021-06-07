@@ -12,11 +12,11 @@ describe('user', function() {
     })
 
     it("can be created", async function() {
-        await User.register(new User({ username: 'sol', email: 'solomonabrahams100@gmail.com' }), 'testpass')
+        await User.register(await new User({ username: 'sol', email: 'solomonabrahams100@gmail.com' }), 'testpass')
     })
     describe('that already exists', function() {
         beforeEach(async () => {
-            await User.register(new User({ username: 'sol', email: 'solomonabrahams100@gmail.com' }), 'testpass').catch(err => {
+            await User.register(await new User({ username: 'sol', email: 'solomonabrahams100@gmail.com' }), 'testpass').catch(err => {
                 // Ignore error as user may have already been created
             })
         })
@@ -39,7 +39,7 @@ describe('user', function() {
 
         describe("can handle friends", function() {
             beforeEach(async () => {
-                await User.register(new User({ username: 'friend1', email: 'friend@gmail.com' }), 'testpass').catch(err => {
+                await User.register(await new User({ username: 'friend1', email: 'friend@gmail.com' }), 'testpass').catch(err => {
                     // Ignore error as user may have already been created
                 })
             })

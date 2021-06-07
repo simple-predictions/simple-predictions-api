@@ -5,7 +5,7 @@ const User = require('../src/models/user').user
 
 describe('minileague', function() {
     beforeEach(async () => {
-        await User.register(new User({ username: 'sol', email: 'solomonabrahams100@gmail.com' }), 'testpass').catch(err => {
+        await User.register(await new User({ username: 'sol', email: 'solomonabrahams100@gmail.com' }), 'testpass').catch(err => {
             // Ignore error as user may have already been created
         })
     })
@@ -18,7 +18,7 @@ describe('minileague', function() {
     })
 
     it('can be joined', async function() {
-        await User.register(new User({ username: 'test2', email: 'testuser@gmail.com' }), 'testpass').catch(err => {
+        await User.register(await new User({ username: 'test2', email: 'testuser@gmail.com' }), 'testpass').catch(err => {
             // Ignore error as user may have already been created
         })
         await createMiniLeague('sol', 'testleague')
@@ -26,7 +26,7 @@ describe('minileague', function() {
     })
 
     it('cannot be joined twice', async function() {
-        await User.register(new User({ username: 'test2', email: 'testuser@gmail.com' }), 'testpass').catch(err => {
+        await User.register(await new User({ username: 'test2', email: 'testuser@gmail.com' }), 'testpass').catch(err => {
             // Ignore error as user may have already been created
         })
         await createMiniLeague('sol', 'testleague')
