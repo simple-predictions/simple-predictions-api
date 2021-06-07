@@ -42,6 +42,16 @@ chai.use(require('chai-as-promised'))
 // Our parent block
 before(async () => await connect());
 
+before(function () {
+    //silence the console
+    console.log = function () {};
+});
+
+after(function () {
+    //reset console
+    delete console.log;
+});
+
 afterEach(async() => await clearDatabase());
 
 after(async () => await disconnnect());

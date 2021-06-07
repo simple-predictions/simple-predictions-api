@@ -23,13 +23,15 @@ describe('user', function() {
         it("can be read", async function() {
             await getUserInfo('sol')
         })
-        it("can reset password", async function() {
-            const emailRes = await resetPassword('sol')
-            expect(emailRes).to.equal('Email sent')
-
-            await User.updateOne({ username: 'sol' }, { verification_token: 'stub' })
-            const passwordRes = await createNewPassword('sol', 'stub', 'newpassword')
-            expect(passwordRes).to.equal('Password updated. Please login using your new password.')
+        it("can reset password", function(done) {
+            const emailRes = resetPassword('sol')
+            emailRes.should.eventually.equal('Email sent')
+            User.updateOne({ username: 'sol' }, { verification_token: 'stub' }, async function(err) {
+                if (err) throw err
+                const passwordRes = createNewPassword('sol', 'stub', 'newpassword')
+                passwordRes.should.eventually.equal('Password updated. Please login using your new password.')
+                done()
+            })
         })
         it("cannot reset password with incorrect verification token", async function() {
             await createNewPassword('sol', 'incorrecttoken', 'newpassword').should.be.rejectedWith("Verification token doesn't match")
