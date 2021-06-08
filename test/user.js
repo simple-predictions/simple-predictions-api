@@ -35,13 +35,13 @@ describe('user', function() {
                 done()
             })
         })
-        /*it("cannot reset password with incorrect verification token", function() {
+        it("cannot reset password with incorrect verification token", function() {
             console.info(Date.now())
             createNewPassword('sol', 'incorrecttoken', 'newpassword').should.eventually.be.rejectedWith("Verification token doesn't match").then(() => {
                 console.info(Date.now())
                 done()
             })
-        })*/
+        })
 
         describe("can handle friends", function() {
             beforeEach(() => {
