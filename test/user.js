@@ -46,7 +46,7 @@ describe('user', function() {
                 })
             })
             it("can add friends", async function() {
-                await addFriend('sol', 'friend1')
+                return await addFriend('sol', 'friend1')
             })
             it("cannot add friends that don't exist", async function() {
                 await addFriend('sol', 'fakefriend').should.be.rejectedWith('Username not found')
