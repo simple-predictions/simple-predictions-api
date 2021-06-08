@@ -52,13 +52,7 @@ after(function () {
     delete console.log;
 });
 
-afterEach((done) => {
-    console.info('about to clear')
-    clearDatabase().then(() => {
-        console.info('cleared')
-        done()
-    })
-});
+afterEach(() => clearDatabase());
 
 after(async () => await disconnnect());
 
