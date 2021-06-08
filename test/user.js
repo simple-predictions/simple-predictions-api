@@ -44,8 +44,8 @@ describe('user', function() {
         })*/
 
         describe("can handle friends", function() {
-            beforeEach(async () => {
-                await User.register(await new User({ username: 'friend1', email: 'friend@gmail.com' }), 'testpass').catch(err => {
+            beforeEach(() => {
+                return User.register(new User({ username: 'friend1', email: 'friend@gmail.com' }), 'testpass').catch(err => {
                     // Ignore error as user may have already been created
                 })
             })
