@@ -16,10 +16,8 @@ describe('user', function() {
     })
     describe('that already exists', function() {
         beforeEach((done) => {
-            console.info('presubmit')
             User.register(new User({ username: 'sol', email: 'solomonabrahams100@gmail.com' }), 'testpass', function(err, res) {
                 done()
-                console.info('postsubmit')
             })
         })
         it("can be read", async function() {
@@ -36,9 +34,7 @@ describe('user', function() {
             })
         })
         it("cannot reset password with incorrect verification token", function() {
-            console.info(Date.now())
             createNewPassword('sol', 'incorrecttoken', 'newpassword').should.eventually.be.rejectedWith("Verification token doesn't match").then(() => {
-                console.info(Date.now())
                 done()
             })
         })

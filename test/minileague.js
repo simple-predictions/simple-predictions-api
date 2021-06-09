@@ -1,6 +1,6 @@
 /* eslint-disable */
 
-const { createMiniLeague, joinMiniLeague } = require('../src/services/minileague')
+const { createMiniLeague, joinMiniLeague, getMiniLeagues } = require('../src/services/minileague')
 const User = require('../src/models/user').user
 
 describe('minileague', function() {
@@ -36,5 +36,12 @@ describe('minileague', function() {
 
     it('cannot be joined if it does not exist', async function() {
         await joinMiniLeague('sol', 'fakeleague').should.be.rejectedWith("Mini-league doesn't exist")
+    })
+
+    it('can be viewed after created', async function() {
+        await createMiniLeague('sol', 'testleague')
+        const minileagues = await getMiniLeagues('sol')
+        minileagues.should.have.length(1)
+        minileagues[0].should.have.keys(['members','_id','name','table','rankings','__v'])
     })
 })
