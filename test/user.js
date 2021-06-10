@@ -33,7 +33,7 @@ describe('user', function() {
                 done()
             })
         })
-        it("cannot reset password with incorrect verification token", function() {
+        it("cannot reset password with incorrect verification token", function(done) {
             createNewPassword('sol', 'incorrecttoken', 'newpassword').should.eventually.be.rejectedWith("Verification token doesn't match").then(() => {
                 done()
             })
