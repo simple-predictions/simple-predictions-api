@@ -1,9 +1,23 @@
 /* eslint-disable */
 
 const { scoreGames, calculateScores } = require('../src/services/scoring')
+const Match = require('../src/models/user').match
+const Prediction = require('../src/models/user').prediction
 
 describe('games', function() {
-    describe("are scored correctly", function() {
+    it("are scored correctly from database", async function() {
+        const pred1 = await Prediction.create({home_pred: 0, away_pred: 1})
+        const pred2 = await Prediction.create({home_pred: 1, away_pred: 1})
+        const pred3 = await Prediction.create({home_pred: 1, away_pred: 0})
+        await Match.create({live_home_score: 0, live_away_score: 1, predictions: [ pred1['_id'], pred2['_id'], pred3['_id'] ]})
+        await scoreGames()
+        const new_pred = await Prediction.find({})
+        new_pred[0]['points'].should.equal(30)
+        new_pred[1]['points'].should.equal(-10)
+        new_pred[2]['points'].should.equal(-10)
+    })
+
+    describe("scores are calculated correctly", function() {
         it("when prediction is exactly correct", function() {
             calculateScores(1, 0, 1, 0, false, false, 2).should.equal(30)
             calculateScores(0, 1, 0, 1, false, false, 2).should.equal(30)
