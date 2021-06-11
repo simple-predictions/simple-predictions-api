@@ -1,5 +1,5 @@
 on: [push, pull_request]
-jobs: 
+jobs:
   codecov-tests:
     name: Run test suite and Codecov
     runs-on: ubuntu-latest
@@ -17,7 +17,7 @@ jobs:
       run: npx eslint ./src
     - name: Run test suite
       run: npm test
-      env: 
+      env:
         SENDGRID_PASS: ${{ secrets.SENDGRID_PASS }}
     - name: Generate code coverage
       run: npm run coverage
