@@ -19,6 +19,8 @@ jobs:
       run: npm test
       env:
         SENDGRID_PASS: ${{ secrets.SENDGRID_PASS }}
+        TWIT_ACCESS_TOKEN_SECRET: ${{ secrets.TWIT_ACCESS_TOKEN_SECRET }}
+        TWIT_CONSUMER_SECRET: ${{ secrets.TWIT_CONSUMER_SECRET }}
     - name: Generate code coverage
       run: npm run coverage
     - name: Upload code coverage to codecov
