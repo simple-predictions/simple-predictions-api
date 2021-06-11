@@ -15,10 +15,8 @@ describe('user', function() {
         await User.register(await new User({ username: 'sol', email: 'solomonabrahams100@gmail.com' }), 'testpass')
     })
     describe('that already exists', function() {
-        beforeEach((done) => {
-            User.register(new User({ username: 'sol', email: 'solomonabrahams100@gmail.com' }), 'testpass', function(err, res) {
-                done()
-            })
+        beforeEach(async () => {
+            await User.register(new User({ username: 'sol', email: 'solomonabrahams100@gmail.com' }), 'testpass')
         })
         it("can be read", async function() {
             await getUserInfo('sol')
