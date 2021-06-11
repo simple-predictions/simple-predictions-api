@@ -62,7 +62,7 @@ const scoreGames = exports.scoreGames
 
 function calculateScores (predHome, predAway, liveHome, liveAway, banker, insurance, bankerMult) {
   // For now fixed banker mult
-  bankerMult = 3
+  bankerMult = bankerMult || 3
   let points
   // Check if predictions present
   if (predHome == null || predAway == null || liveHome == null || liveAway == null) {
@@ -100,6 +100,8 @@ function calculateScores (predHome, predAway, liveHome, liveAway, banker, insura
   }
   return points
 }
+
+exports.calculateScores = calculateScores
 
 function fixTeamNameProblems (name) {
   name = name.replace('AFC', '')
