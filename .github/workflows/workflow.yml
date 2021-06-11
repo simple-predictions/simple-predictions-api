@@ -1,7 +1,7 @@
-on: push
+on: [push, pull_request]
 jobs: 
   codecov-tests:
-    name: Run Codecov test suite
+    name: Run test suite and Codecov
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -11,12 +11,16 @@ jobs:
     - uses: actions/setup-node@v2
       with:
         node-version: '14'
-    - run: npm ci
-    - run: npm test
+    - name: Install npm dependencies
+      run: npm ci
+    - name: Run test suite
+      run: npm test
       env: 
         SENDGRID_PASS: ${{ secrets.SENDGRID_PASS }}
-    - run: npm run coverage
-    - uses: codecov/codecov-action@v1.5.0
+    - name: Generate code coverage
+      run: npm run coverage
+    - name: Upload code coverage to codecov
+      uses: codecov/codecov-action@v1.5.0
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         verbose: true
