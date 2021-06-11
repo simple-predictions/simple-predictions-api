@@ -14,7 +14,7 @@ const T = new Twit({
 })
 
 exports.scoreGames = () => {
-  console.info('score games /services/scoring.js called')
+  console.log('score games /services/scoring.js called')
   return new Promise(function (resolve, reject) {
     let games
     Match.find({}).populate('predictions').exec(async (err, result) => {
@@ -112,72 +112,79 @@ function fixTeamNameProblems (name) {
   return name
 }
 
+async function parseTwitterLiveScores (result) {
+  const tweets = result.data
+  // tweets = ['test']
+  // Loop through last 10 tweets from official Premier League account
+  for (let i = 0; i < tweets.length; i++) {
+    const tweet = tweets[i]
+    const tweetText = tweet.text
+    // DEBUG: tweet_text = "GOAL Liverpool 1-3 Bournemouth (72 mins) Champions respond! Leroy Sane drills low across goal from the left and his pinpoint effort goes in off the post #MCILIV"
+    // Check if tweet announces a goal
+    if (!tweetText) {
+      continue
+    }
+    if (!tweetText.startsWith('GOAL ')) {
+      // Skips the iteration of this tweet
+      continue
+    }
+    // We now know that the tweet annouces a goal in the standard format
+    // Find brackets in tweet which signify end of teams and score
+    const splitTweet = tweetText.split(/[()]+/)
+    // Filter after keyword goal
+    const finalTweet = splitTweet[0].split('GOAL ')[1]
+    // final_tweet should contain 'HomeName HomeScore-AwayScore AwayName'
+    // Find score
+    const scoreIndex = finalTweet.search(/\d.*\d/)
+    const score = finalTweet.substring(scoreIndex, scoreIndex + 3)
+    const scoreArr = score.split('-')
+    const homeScore = parseInt(scoreArr[0])
+    const awayScore = parseInt(scoreArr[1])
+    const combinedScore = homeScore + awayScore
+    // Split into team names
+    const teams = finalTweet.split(/\s\d.*\d\s/)
+    let homeTeam = teams[0]
+    let awayTeam = teams[1].split(/ [^ ]*$/)[0]
+    homeTeam = fixTeamNameProblems(homeTeam)
+    awayTeam = fixTeamNameProblems(awayTeam)
+    await new Promise(resolve => {
+      Match.findOne({ home_team: homeTeam, away_team: awayTeam }, async function (err, result) {
+        if (err) throw err
+        if (result == null || homeScore == null) {
+          await scoreGames()
+          resolve()
+        } else {
+          if (result.live_home_score + result.live_away_score < combinedScore || result.live_home_score == null) {
+            // Update the score as it is greater than the previous score
+            const id = result._id
+            console.log('set score in updatelivescores: ' + homeTeam + ' vs ' + awayTeam + ' to ' + homeScore + ' - ' + awayScore)
+            await new Promise((resolve, reject) => {
+              Match.updateOne({ _id: id }, { $set: { live_home_score: homeScore, live_away_score: awayScore } }, async function (err, result) {
+                if (err) throw err
+                await scoreGames()
+                resolve()
+              })
+            })
+          // Call score game to update the scoring
+          }
+          await scoreGames()
+          resolve()
+        }
+      })
+    })
+  }
+  return result
+}
+
+exports.parseTwitterLiveScores = parseTwitterLiveScores
+
 exports.updateLiveScores = async () => {
   console.log('scoring live games begin')
   await scoreGames()
   // Get request used rather than streaming because it can be filtered by account (more narrowly)
   T.get('statuses/user_timeline', { user_id: 343627165, count: 50 }).then(async function (result) {
-    const tweets = result.data
-    // tweets = ['test']
-    // Loop through last 10 tweets from official Premier League account
-    for (let i = 0; i < tweets.length; i++) {
-      const tweet = tweets[i]
-      const tweetText = tweet.text
-      // DEBUG: tweet_text = "GOAL Liverpool 1-3 Bournemouth (72 mins) Champions respond! Leroy Sane drills low across goal from the left and his pinpoint effort goes in off the post #MCILIV"
-      // Check if tweet announces a goal
-      if (!tweetText) {
-        continue
-      }
-      if (!tweetText.startsWith('GOAL ')) {
-        // Skips the iteration of this tweet
-        continue
-      }
-      // We now know that the tweet annouces a goal in the standard format
-      // Find brackets in tweet which signify end of teams and score
-      const splitTweet = tweetText.split(/[()]+/)
-      // Filter after keyword goal
-      const finalTweet = splitTweet[0].split('GOAL ')[1]
-      // final_tweet should contain 'HomeName HomeScore-AwayScore AwayName'
-      // Find score
-      const scoreIndex = finalTweet.search(/\d.*\d/)
-      const score = finalTweet.substring(scoreIndex, scoreIndex + 3)
-      const scoreArr = score.split('-')
-      const homeScore = parseInt(scoreArr[0])
-      const awayScore = parseInt(scoreArr[1])
-      const combinedScore = homeScore + awayScore
-      // Split into team names
-      const teams = finalTweet.split(/\s\d.*\d\s/)
-      let homeTeam = teams[0]
-      let awayTeam = teams[1].split(/ [^ ]*$/)[0]
-      homeTeam = fixTeamNameProblems(homeTeam)
-      awayTeam = fixTeamNameProblems(awayTeam)
-      await new Promise(resolve => {
-        Match.findOne({ home_team: homeTeam, away_team: awayTeam }, async function (err, result) {
-          if (err) throw err
-          if (result == null || homeScore == null) {
-            await scoreGames()
-            resolve()
-          } else {
-            if (result.live_home_score + result.live_away_score < combinedScore || result.live_home_score == null) {
-              // Update the score as it is greater than the previous score
-              const id = result._id
-              console.log('set score in updatelivescores: ' + homeTeam + ' vs ' + awayTeam + ' to ' + homeScore + ' - ' + awayScore)
-              await new Promise((resolve, reject) => {
-                Match.updateOne({ _id: id }, { $set: { live_home_score: homeScore, live_away_score: awayScore } }, async function (err, result) {
-                  if (err) throw err
-                  await scoreGames()
-                  resolve()
-                })
-              })
-            // Call score game to update the scoring
-            }
-            await scoreGames()
-            resolve()
-          }
-        })
-      })
-    }
-    return result
+    console.log(result)
+    parseTwitterLiveScores(result)
   })
 }
 
@@ -206,7 +213,7 @@ exports.updateTodayGames = () => {
 }
 
 exports.updateFootballDataScores = async optionalGameweek => {
-  console.info('updateFootballDataScores called')
+  console.log('updateFootballDataScores called')
   let options = {
     hostname: 'api.football-data.org',
     path: '/v2/competitions/PL',
@@ -278,7 +285,7 @@ async function updateDBScoresFootballData (json) {
         if (result.status !== status) {
           Match.updateOne({ _id: result.id }, { $set: { status: status } }, function (err) {
             if (err) throw err
-            console.info('game status updated for ' + homeTeam + ' vs ' + awayTeam + ' to ' + status)
+            console.log('game status updated for ' + homeTeam + ' vs ' + awayTeam + ' to ' + status)
           })
         }
         if (homeScore == null) {
@@ -287,7 +294,7 @@ async function updateDBScoresFootballData (json) {
             await new Promise((resolve, reject) => {
               Match.updateOne({ _id: result._id }, { $set: { live_home_score: 0, live_away_score: 0 } }, function (err, result) {
                 if (err) throw err
-                console.info('set scores to 0')
+                console.log('set scores to 0')
                 resolve()
               })
             })
@@ -301,7 +308,7 @@ async function updateDBScoresFootballData (json) {
             await new Promise((resolve, reject) => {
               Match.updateOne({ _id: id }, { $set: { live_home_score: homeScore, live_away_score: awayScore, status: status } }, function (err, result) {
                 if (err) throw err
-                console.info('score updated through football-data api')
+                console.log('score updated through football-data api')
                 resolve()
               })
             })
