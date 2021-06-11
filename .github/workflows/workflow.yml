@@ -20,6 +20,7 @@ jobs:
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         verbose: true
+    - run: npm run coveralls
     - name: Coveralls GitHub Action
       uses: coverallsapp/github-action@v1.1.2
       with:
