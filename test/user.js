@@ -21,7 +21,7 @@ describe('user', function() {
         it("can be read", async function() {
             await getUserInfo('sol')
         })
-        it("can reset password", function(done) {
+        /*it("can reset password", function(done) {
             const emailRes = resetPassword('sol')
             emailRes.should.eventually.equal('Email sent')
             User.updateOne({ username: 'sol' }, { verification_token: 'stub' }, async function(err) {
@@ -30,16 +30,14 @@ describe('user', function() {
                 passwordRes.should.eventually.equal('Password updated. Please login using your new password.')
                 done()
             })
-        })
+        })*/
         /*it("cannot reset password with incorrect verification token", function() {
             return createNewPassword('sol', 'incorrecttoken', 'newpassword').should.eventually.be.rejectedWith("Verification token doesn't match")
         })*/
 
         describe("can handle friends", function() {
-            beforeEach(() => {
-                return User.register(new User({ username: 'friend1', email: 'friend@gmail.com' }), 'testpass').catch(err => {
-                    // Ignore error as user may have already been created
-                })
+            beforeEach(async () => {
+                await User.register(new User({ username: 'friend1', email: 'friend@gmail.com' }), 'testpass')
             })
             it("can add friends", async function() {
                 await addFriend('sol', 'friend1')
