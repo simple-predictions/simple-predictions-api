@@ -20,3 +20,5 @@ jobs:
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         verbose: true
+    - name: Coveralls GitHub Action
+      uses: coverallsapp/github-action@v1.1.2
