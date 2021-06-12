@@ -1,7 +1,8 @@
+name: Ubuntu build, lint and test
 on: [push, pull_request]
 jobs:
-  codecov-tests:
-    name: Run test suite and Codecov
+  install-dependencies:
+    name: Install dependencies
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -13,8 +14,22 @@ jobs:
         node-version: '14'
     - name: Install npm dependencies
       run: npm ci
+  run-linter:
+    needs: install-dependencies
+    name: Check lint
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./
     - name: Run linter
       run: npx eslint ./src
+  test:
+    needs: install-dependencies
+    name: Run tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./
     - name: Run test suite
       run: npm test
       env:
