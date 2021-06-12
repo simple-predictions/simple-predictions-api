@@ -1,8 +1,10 @@
 /* eslint-disable */
-const { updatePrediction } = require('../src/services/predictions')
+const { updatePrediction, updateManyPredictions } = require('../src/services/predictions')
+const predictionModule = require('../src/services/predictions')
 const Match = require('../src/models/user').match
 const User = require('../src/models/user').user
 const Prediction = require('../src/models/user').prediction
+const sinon = require('sinon')
 
 describe('predictions', function() {
     beforeEach(async () => {
@@ -40,6 +42,46 @@ describe('predictions', function() {
         pred.home_pred.should.equal(2)
         pred.away_pred.should.equal(1)
 
+    })
+    it('can be updated collectively', async function() {
+        const match1 = await Match.create({home_team: 'Team1', away_team: 'Team2', gameweek: 1})
+        const match2 = await Match.create({home_team: 'Team3', away_team: 'Team4', gameweek: 1})
+        const stub = sinon.stub(predictionModule, 'updatePrediction')
+        const data = [
+            {
+                home_pred: 1,
+                away_pred: 0,
+                banker: false,
+                insurance: false,
+                game_id: this.test.matchID
+            },
+            {
+                home_pred: 1,
+                away_pred: 1,
+                banker: true,
+                insurance: false,
+                game_id: match1._id
+            },
+            {
+                home_pred: 1,
+                away_pred: 0,
+                banker: false,
+                insurance: true,
+                game_id: match2._id
+            }
+        ]
+        await updateManyPredictions('sol', data)
+        stub.args[0][1].should.equal(1)
+        stub.args[0][2].should.equal(0)
+        stub.args[1][1].should.equal(1)
+        stub.args[1][2].should.equal(1)
+        stub.args[2][1].should.equal(1)
+        stub.args[2][2].should.equal(0)
+        stub.args[1][4].should.equal(true)
+        stub.args[1][5].should.equal(false)
+        stub.args[2][4].should.equal(false)
+        stub.args[2][5].should.equal(true)
+        stub.restore()
     })
     it('cannot have a banker and insurance', async function() {
         await updatePrediction('sol', 1, 0, this.test.matchID, true, true).should.eventually.be.rejectedWith('You cannot play an insurance and banker')

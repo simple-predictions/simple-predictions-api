@@ -22,7 +22,7 @@ exports.updateManyPredictions = async (username, json) => {
     const gameID = prediction.game_id
     promises.push(this.updatePrediction(username, homePred, awayPred, gameID))
   }
-  Promise.allSettled(promises).then(() => {
+  await Promise.allSettled(promises).then(() => {
     for (let i = 0; i < specialPreds.length; i++) {
       const prediction = specialPreds[i]
       const homePred = prediction.home_pred
