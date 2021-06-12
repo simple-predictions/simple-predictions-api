@@ -12,6 +12,7 @@ describe('games', function() {
         await updateFootballDataScores()
         const matches = stub.args[0][0].matches
         matches.should.have.lengthOf(10)
+        stub.restore()
     })
 
     it("are updated live from twitter", async function() {
