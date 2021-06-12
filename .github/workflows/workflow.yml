@@ -21,6 +21,7 @@ jobs:
     defaults:
       run:
         working-directory: ./
+    steps:
     - name: Run linter
       run: npx eslint ./src
   test:
@@ -30,6 +31,7 @@ jobs:
     defaults:
       run:
         working-directory: ./
+    steps:
     - name: Run test suite
       run: npm test
       env:
