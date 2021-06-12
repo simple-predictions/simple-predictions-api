@@ -40,6 +40,9 @@ exports.updateManyPredictions = async (username, json) => {
 
 exports.updatePrediction = (username, homePred, awayPred, gameID, banker, insurance) => {
   return new Promise((resolve, reject) => {
+    if (insurance && banker) {
+      resolve()
+    }
     User.findOne({ username: username }, function (err, res) {
       const userID = res._id
       if (err) throw err
