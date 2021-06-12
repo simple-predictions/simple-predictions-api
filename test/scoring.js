@@ -1,6 +1,6 @@
 /* eslint-disable */
 
-const { scoreGames, calculateScores, parseTwitterLiveScores, updateLiveScores, updateDBScoresFootballData, updateFootballDataScores } = require('../src/services/scoring')
+const { scoreGames, calculateScores, parseTwitterLiveScores, updateLiveScores, updateTodayGames, updateFootballDataScores } = require('../src/services/scoring')
 const scoringModule = require('../src/services/scoring')
 const Match = require('../src/models/user').match
 const Prediction = require('../src/models/user').prediction
@@ -12,6 +12,14 @@ describe('games', function() {
         await updateFootballDataScores()
         const matches = stub.args[0][0].matches
         matches.should.have.lengthOf(10)
+        stub.restore()
+    })
+
+    it("are updated today from football data scores", async function() {
+        const stub = sinon.stub(scoringModule, 'updateDBScoresFootballData')
+        await updateTodayGames()
+        const competition = stub.args[0][0]['competition']
+        competition.name.should.equal('Premier League')
         stub.restore()
     })
 

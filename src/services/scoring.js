@@ -198,15 +198,18 @@ exports.updateTodayGames = () => {
       'X-Auth-Token': env.FOOTBALL_DATA_API_AUTH
     }
   }
-  https.get(options, res => {
-    let data = ''
-    res.on('data', d => {
-      data += d
-    })
-    res.on('end', () => {
-      const json = JSON.parse(data)
-      console.log(JSON.stringify(json))
-      updateDBScoresFootballData(json)
+  return new Promise(resolve => {
+    https.get(options, res => {
+      let data = ''
+      res.on('data', d => {
+        data += d
+      })
+      res.on('end', async () => {
+        const json = JSON.parse(data)
+        console.log(JSON.stringify(json))
+        await exports.updateDBScoresFootballData(json)
+        resolve()
+      })
     })
   })
 }
