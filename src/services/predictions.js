@@ -41,7 +41,8 @@ exports.updateManyPredictions = async (username, json) => {
 exports.updatePrediction = (username, homePred, awayPred, gameID, banker, insurance) => {
   return new Promise((resolve, reject) => {
     if (insurance && banker) {
-      resolve()
+      reject(new Error('You cannot play an insurance and banker'))
+      return
     }
     User.findOne({ username: username }, function (err, res) {
       const userID = res._id
