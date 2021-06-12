@@ -183,8 +183,7 @@ exports.updateLiveScores = async () => {
   await scoreGames()
   // Get request used rather than streaming because it can be filtered by account (more narrowly)
   T.get('statuses/user_timeline', { user_id: 343627165, count: 50 }).then(async function (result) {
-    console.log(result)
-    parseTwitterLiveScores(result)
+    await parseTwitterLiveScores(result)
   })
 }
 
@@ -244,14 +243,17 @@ exports.updateFootballDataScores = async optionalGameweek => {
       'X-Auth-Token': env.FOOTBALL_DATA_API_AUTH
     }
   }
-  https.get(options, res => {
-    let data = ''
-    res.on('data', d => {
-      data += d
-    })
-    res.on('end', () => {
-      const json = JSON.parse(data)
-      updateDBScoresFootballData(json)
+  return new Promise(resolve => {
+    https.get(options, res => {
+      let data = ''
+      res.on('data', d => {
+        data += d
+      })
+      res.on('end', async () => {
+        const json = JSON.parse(data)
+        await exports.updateDBScoresFootballData(json)
+        resolve()
+      })
     })
   })
 }
@@ -282,6 +284,9 @@ async function updateDBScoresFootballData (json) {
     await new Promise(resolve => {
       Match.findOne({ home_team: homeTeam, away_team: awayTeam }, async function (err, result) {
         if (err) throw err
+        if (!result) {
+          resolve()
+        }
         if (result.status !== status) {
           Match.updateOne({ _id: result.id }, { $set: { status: status } }, function (err) {
             if (err) throw err
@@ -320,3 +325,5 @@ async function updateDBScoresFootballData (json) {
     })
   }
 }
+
+exports.updateDBScoresFootballData = updateDBScoresFootballData

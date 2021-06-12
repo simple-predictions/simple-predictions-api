@@ -1,11 +1,24 @@
 /* eslint-disable */
 
-const { scoreGames, calculateScores, parseTwitterLiveScores } = require('../src/services/scoring')
+const { scoreGames, calculateScores, parseTwitterLiveScores, updateLiveScores, updateDBScoresFootballData, updateFootballDataScores } = require('../src/services/scoring')
+const scoringModule = require('../src/services/scoring')
 const Match = require('../src/models/user').match
 const Prediction = require('../src/models/user').prediction
+const sinon = require('sinon')
 
 describe('games', function() {
-    it("are updated live", async function() {
+    it("are updated historically from football data scores", async function() {
+        const stub = sinon.stub(scoringModule, 'updateDBScoresFootballData')
+        await updateFootballDataScores()
+        const matches = stub.args[0][0].matches
+        matches.should.have.lengthOf(10)
+    })
+
+    it("are updated live from twitter", async function() {
+        await updateLiveScores()
+    })
+
+    it("are updated and parsed live from twitter", async function() {
         const pred1 = await Prediction.create({home_pred: 1, away_pred: 1})
         const pred2 = await Prediction.create({home_pred: 0, away_pred: 1})
         await Match.create({home_team: 'Liverpool', away_team: 'Bournemouth', live_home_score: 0, live_away_score: 1, predictions: [ pred1['_id'], pred2['_id'] ]})
