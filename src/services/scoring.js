@@ -284,11 +284,11 @@ async function updateDBScoresFootballData (json) {
     if ((homeTeam && awayTeam) && (homeScore || homeScore === 0) && (awayScore || awayScore === 0)) {
       console.log(`Currently checking in updateDBScoresFootballData for: ${homeTeam} vs ${awayTeam} with a final score of ${homeScore}-${awayScore}`)
     }
-    await new Promise(resolve => {
+    await new Promise((resolve, reject) => {
       Match.findOne({ home_team: homeTeam, away_team: awayTeam }, async function (err, result) {
         if (err) throw err
         if (!result) {
-          resolve()
+          reject(new Error('Match not found'))
         }
         if (result.status !== status) {
           Match.updateOne({ _id: result.id }, { $set: { status: status } }, function (err) {

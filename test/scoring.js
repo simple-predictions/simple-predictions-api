@@ -1,6 +1,6 @@
 /* eslint-disable */
 
-const { scoreGames, calculateScores, parseTwitterLiveScores, updateLiveScores, updateTodayGames, updateFootballDataScores } = require('../src/services/scoring')
+const { scoreGames, calculateScores, parseTwitterLiveScores, updateLiveScores, updateTodayGames, updateFootballDataScores, updateDBScoresFootballData } = require('../src/services/scoring')
 const scoringModule = require('../src/services/scoring')
 const Match = require('../src/models/user').match
 const Prediction = require('../src/models/user').prediction
@@ -21,6 +21,53 @@ describe('games', function() {
         const competition = stub.args[0][0]['competition']
         competition.name.should.equal('Premier League')
         stub.restore()
+    })
+
+    it("are updated in the database", async function() {
+        await Match.create({home_team: 'Arsenal', away_team: 'Tottenham'})
+        await Match.create({home_team: 'Chelsea', away_team: 'Liverpool'})
+        const data = {
+            matches: [
+                {
+                    homeTeam: {
+                        name: 'Arsenal'
+                    },
+                    awayTeam: {
+                        name: 'Tottenham'
+                    },
+                    score: {
+                        fullTime: {
+                            homeTeam: 0,
+                            awayTeam: 1
+                        }
+                    },
+                    status: 'FINISHED'
+                },
+                {
+                    homeTeam: {
+                        name: 'Chelsea'
+                    },
+                    awayTeam: {
+                        name: 'Liverpool'
+                    },
+                    score: {
+                        fullTime: {
+                            homeTeam: 1,
+                            awayTeam: 1
+                        }
+                    },
+                    status: 'IN_PLAY'
+                }
+            ]
+        }
+        await updateDBScoresFootballData(data)
+        const matches = await Match.find({})
+        matches[0].live_home_score.should.equal(0)
+        matches[0].live_away_score.should.equal(1)
+        matches[0].status.should.equal('FINISHED')
+        matches[1].live_home_score.should.equal(1)
+        matches[1].live_away_score.should.equal(1)
+        matches[1].status.should.equal('IN_PLAY')
     })
 
     it("are updated live from twitter", async function() {
