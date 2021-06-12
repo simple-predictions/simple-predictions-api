@@ -1,8 +1,8 @@
 name: Ubuntu build, lint and test
 on: [push, pull_request]
 jobs:
-  install-dependencies:
-    name: Install dependencies
+  run-linter:
+    name: Run linter
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -14,24 +14,21 @@ jobs:
         node-version: '14'
     - name: Install npm dependencies
       run: npm ci
-  run-linter:
-    needs: install-dependencies
-    name: Check lint
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./
-    steps:
     - name: Run linter
       run: npx eslint ./src
-  test:
-    needs: install-dependencies
+  run-tests:
     name: Run tests
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: ./
     steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+    - name: Install npm dependencies
+      run: npm ci
     - name: Run test suite
       run: npm test
       env:
