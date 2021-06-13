@@ -59,4 +59,38 @@ describe('test match schema', function() {
         res.data.matchMany[1].home_team.should.equal("Chelsea")
         res.data.matchMany[1].away_team.should.equal("Liverpool")
     })
+    it('should lock past games', async function() {
+        await Match.create({home_team: 'Chelsea', away_team: 'Liverpool', gameweek: 1, kick_off_time: new Date(Date.now() - 604800000)})
+
+        const res = await this.graphQLServer.executeOperation({
+            query: `
+            query {
+                matchOne(filter: {home_team: "Chelsea", away_team: "Liverpool"}) {
+                    home_team
+                    away_team
+                    locked
+                    kick_off_time
+                }
+            }`
+        })
+        console.info(res.data.matchOne)
+        res.data.matchOne.locked.should.equal(true)
+    })
+    it('should not lock future games', async function() {
+        await Match.create({home_team: 'Chelsea', away_team: 'Liverpool', gameweek: 1, kick_off_time: new Date(Date.now() + 604800000)})
+
+        const res = await this.graphQLServer.executeOperation({
+            query: `
+            query {
+                matchOne(filter: {home_team: "Chelsea", away_team: "Liverpool"}) {
+                    home_team
+                    away_team
+                    locked
+                    kick_off_time
+                }
+            }`
+        })
+        console.info(res.data.matchOne)
+        res.data.matchOne.locked.should.equal(false)
+    })
 })
