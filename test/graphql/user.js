@@ -2,7 +2,9 @@
 
 const schema = require('../../src/api/graphql/index')
 const { assert } = require('chai')
-const { user: User } = require('../../src/models/user')
+const { user: User, match: Match } = require('../../src/models/user')
+const { updatePrediction } = require('../../src/services/predictions')
+const { updateDBScoresFootballData } = require('../../src/services/scoring')
 
 describe('test match schema', function() {
     it('should exist', function() {
@@ -34,5 +36,43 @@ describe('test match schema', function() {
         })
         res.data.userOne.username.should.equal('other')
         assert.isNull(res.data.userOne.email)
+    })
+    it("should return a user's total points", async function() {
+        const { _id: id } = await Match.create({home_team: 'Arsenal', away_team: 'Tottenham'})
+        await updatePrediction('sol', 1, 0, id, false, false)
+        const data = {
+            matches: [
+                {
+                    homeTeam: {
+                        name: 'Arsenal'
+                    },
+                    awayTeam: {
+                        name: 'Tottenham'
+                    },
+                    score: {
+                        fullTime: {
+                            homeTeam: 0,
+                            awayTeam: 1
+                        }
+                    },
+                    status: 'FINISHED'
+                }
+            ]
+        }
+        await updateDBScoresFootballData(data)
+
+        const res = await this.graphQLServer.executeOperation({
+            query: `
+            query {
+                userOne(filter: {username: "sol"}) {
+                    username
+                    email
+                    totalPoints
+                }
+            }`
+        })
+        res.data.userOne.username.should.equal('sol')
+        res.data.userOne.email.should.equal('solomonabrahams100@gmail.com')
+        res.data.userOne.totalPoints.should.equal(-10)
     })
 })
