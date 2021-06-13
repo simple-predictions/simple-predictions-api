@@ -3,6 +3,9 @@ const { getGameweek } = require('../../services/predictions')
 
 const prepareMatchesQuery = async rp => {
   rp.projection.kick_off_time = true
+  if (!rp.args.filter) {
+    rp.args.filter = {}
+  }
 
   if (rp.args.filter.gameweek === 0) {
     rp.args.filter.gameweek = await getGameweek()

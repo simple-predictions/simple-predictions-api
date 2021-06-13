@@ -73,7 +73,6 @@ describe('test match schema', function() {
                 }
             }`
         })
-        console.info(res.data.matchOne)
         res.data.matchOne.locked.should.equal(true)
     })
     it('should not lock future games', async function() {
@@ -90,7 +89,38 @@ describe('test match schema', function() {
                 }
             }`
         })
-        console.info(res.data.matchOne)
         res.data.matchOne.locked.should.equal(false)
+    })
+    it('should get the correct gameweek when none is specified', async function() {
+        for (let i = 1; i < 39; i++) {
+            await Match.create({home_team: 'Team'+i.toString(), away_team: 'Team'+(i+38).toString(), gameweek: i})
+        }
+        const res = await this.graphQLServer.executeOperation({
+            query: `
+            query {
+                matchMany(filter: {gameweek: 0}) {
+                    home_team
+                    away_team
+                    gameweek
+                }
+            }`
+        })
+        res.data.matchMany.should.have.length(1)
+    })
+    it('should get multiple matches by ids', async function() {
+        const { _id: id1 } = await Match.create({home_team: 'Team1', away_team: 'Team2'})
+        const { _id: id2 } = await Match.create({home_team: 'Team3', away_team: 'Team4'})
+        const { _id: id3 } = await Match.create({home_team: 'Team5', away_team: 'Team6'})
+
+        const res = await this.graphQLServer.executeOperation({
+            query: `
+            query {
+                matchByIds(_ids: ["${id1}", "${id2}", "${id3}"]) {
+                    home_team
+                    away_team
+                }
+            }`
+        })
+        res.data.matchByIds.should.have.length(3)
     })
 })
