@@ -2,7 +2,6 @@
 
 const schema = require('../../src/api/graphql/index')
 const { assert } = require('chai')
-const { gql } = require('apollo-server')
 const { match: Match } = require('../../src/models/user')
 
 describe('test match schema', function() {
