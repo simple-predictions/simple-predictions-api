@@ -12,12 +12,9 @@ describe('user', function() {
     })
 
     it("can be created", async function() {
-        await User.register(await new User({ username: 'sol', email: 'solomonabrahams100@gmail.com' }), 'testpass')
+        await User.register(await new User({ username: 'other', email: 'solomonabrahams100@gmail.com' }), 'testpass')
     })
     describe('that already exists', function() {
-        beforeEach(async () => {
-            await User.register(new User({ username: 'sol', email: 'solomonabrahams100@gmail.com' }), 'testpass')
-        })
         it("can be read", async function() {
             await getUserInfo('sol')
         })
@@ -57,13 +54,13 @@ describe('user', function() {
     })
     describe('that does not exist', function() {
         it("cannot be read", async function() {
-            await getUserInfo('sol').should.be.rejectedWith('User not found')
+            await getUserInfo('other').should.be.rejectedWith('User not found')
         })
         it("cannot request password reset", async function() {
-            await resetPassword('sol').should.be.rejectedWith('User not found')
+            await resetPassword('other').should.be.rejectedWith('User not found')
         })
         it("cannot reset password", async function() {
-            await createNewPassword('sol', 'stub', 'newpassword').should.be.rejectedWith('User not found')
+            await createNewPassword('other', 'stub', 'newpassword').should.be.rejectedWith('User not found')
         })
     })
 })

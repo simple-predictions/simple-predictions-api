@@ -6,6 +6,7 @@ const chai = require('chai')
 const chaiHttp = require('chai-http')
 
 const mongoose = require('mongoose')
+const User = require('../src/models/user').user
 
 const connect = async () => {
     const uri = await mongod.getUri();
@@ -46,6 +47,10 @@ before(function () {
     //silence the console
     console.log = function () {};
 });
+
+beforeEach(async function() {
+    await User.register(new User({ username: 'sol', email: 'solomonabrahams100@gmail.com' }), 'testpass')
+})
 
 after(function () {
     //reset console
