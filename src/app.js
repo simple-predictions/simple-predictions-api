@@ -1,4 +1,5 @@
 require('monitor').start()
+require('newrelic')
 
 const env = require('dotenv').config().parsed || process.env
 
