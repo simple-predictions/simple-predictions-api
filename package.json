@@ -47,7 +47,6 @@
     "mongodb-memory-server": "^6.9.6",
     "mongoose": "^5.12.13",
     "monitor": "^0.6.10",
-    "newrelic": "^7.5.0",
     "nodemailer": "^6.4.17",
     "nyc": "^15.1.0",
     "passport": "^0.4.1",
