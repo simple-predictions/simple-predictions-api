@@ -91,6 +91,7 @@ describe('test match schema', function() {
         res.data.matchOne.locked.should.equal(false)
     })
     it('should get the correct gameweek when none is specified', async function() {
+        await Match.deleteMany({})
         for (let i = 1; i < 39; i++) {
             await Match.create({home_team: 'Team'+i.toString(), away_team: 'Team'+(i+38).toString(), gameweek: i})
         }

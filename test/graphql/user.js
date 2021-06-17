@@ -6,9 +6,9 @@ const { user: User, match: Match } = require('../../src/models/user')
 const { updatePrediction } = require('../../src/services/predictions')
 const { updateDBScoresFootballData } = require('../../src/services/scoring')
 
-describe('test match schema', function() {
+describe('test user schema', function() {
     it('should exist', function() {
-        assert.isDefined(schema.getType('matches'))
+        assert.isDefined(schema.getType('users'))
     })
     it('should get a single user', async function() {
         const res = await this.graphQLServer.executeOperation({
