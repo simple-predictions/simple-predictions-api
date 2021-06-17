@@ -150,7 +150,7 @@ exports.getGameweek = async function getGameweek () {
   return await new Promise(resolve => {
     const options = {
       host: 'footballapi.pulselive.com',
-      path: '/football/compseasons/363/gameweeks',
+      path: '/football/compseasons/418/gameweeks',
       method: 'GET',
       port: 443,
       headers: { Origin: 'https://www.premierleague.com' }
@@ -167,8 +167,7 @@ exports.getGameweek = async function getGameweek () {
         const json = JSON.parse(data)
         // eslint-disable-next-line no-unused-vars
         const gameweekNum = calculateEarliestGameweek(json)
-        // resolve(gameweekNum)
-        resolve(38)
+        resolve(gameweekNum)
       })
     })
   })

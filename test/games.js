@@ -7,7 +7,7 @@ describe('games', function() {
         games().then(() => {
             Match.find({}, function(err, res){
                 if (err) throw err
-                res.should.have.lengthOf.within(378, 382)
+                res.should.have.lengthOf.within(370, 390)
                 done()
             })
         })

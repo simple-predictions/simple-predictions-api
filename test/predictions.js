@@ -8,7 +8,6 @@ const sinon = require('sinon')
 
 describe('predictions', function() {
     beforeEach(async () => {
-        await User.register(new User({ username: 'sol', email: 'solomonabrahams100@gmail.com' }), 'testpass')
         const match = await Match.create({home_team: 'Arsenal', away_team: 'Tottenham', gameweek: 1})
         this.ctx.currentTest.matchID = match['_id'].toString()
     })
