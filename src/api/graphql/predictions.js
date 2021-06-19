@@ -1,15 +1,8 @@
 const { PredictionTC } = require('../../models/user.js')
 const { prediction, match, user } = require('../../models/user')
-const { getGameweek } = require('../../services/predictions')
 
 const cleanPredictionObject = async (pred, rp) => {
-  const { kick_off_time: kickOffTime, gameweek } = (await match.findOne({ _id: pred.match })).toObject()
-
-  if (rp.args.gameweek) {
-    if (rp.args.gameweek !== gameweek) {
-      return
-    }
-  }
+  const { kick_off_time: kickOffTime } = (await match.findOne({ _id: pred.match })).toObject()
 
   if (pred.author.toString() !== rp.context.id && new Date(kickOffTime) > Date.now()) {
     pred.home_pred = undefined
@@ -24,7 +17,7 @@ const predictionFindOneWrap = async (next, rp) => {
   rp.projection.match = true
   const res = await next(rp)
 
-  const pred = cleanPredictionObject(res, rp)
+  const pred = await cleanPredictionObject(res, rp)
 
   return pred
 }
@@ -35,9 +28,6 @@ const predictionFindManyWrap = async (next, rp) => {
   rp.projection.match = true
   const res = await next(rp)
   const preds = []
-  if (rp.args.gameweek === 0) {
-    rp.args.gameweek = await getGameweek()
-  }
 
   for (let i = 0; i < res.length; i++) {
     let pred = res[i]
@@ -70,7 +60,7 @@ exports.PredictionQuery = {
 exports.PredictionMutation = {
   updatePrediction: {
     type: PredictionTC,
-    args: { matchID: 'String!', home_pred: 'Int', away_pred: 'Int', banker: 'Boolean', insurance: 'Boolean' },
+    args: { matchID: 'String!', home_pred: 'Int!', away_pred: 'Int!', banker: 'Boolean', insurance: 'Boolean' },
     resolve: async (source, args, context, info) => {
       // eslint-disable-next-line camelcase
       const { kick_off_time, gameweek } = (await match.findOne({ _id: args.matchID }).select('kick_off_time gameweek -_id'))
