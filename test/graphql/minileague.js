@@ -49,6 +49,25 @@ describe('test minileague schema', function() {
         mongoRes.name.should.equal('Test Minileague')
         mongoRes.members.should.have.lengthOf(1)
     })
+    it('should not create a minileague that already exists', async function() {
+        await Minileague.create({ name: 'Test Minileague' })
+
+        const res = await this.graphQLServer.executeOperation({
+            query: `
+            mutation {
+                createMinileague(leagueName: "Test Minileague") {
+                    name
+                    members {
+                        username
+                    }
+                }
+            }
+            `
+        })
+        assert.isNull(res.data.createMinileague)
+        res.errors.should.have.lengthOf(1)
+        res.errors[0].message.should.equal('Mini league already exists')
+    })
     it('should join a minileague', async function() {
         await Minileague.create({ name: 'Test Minileague' })
         
@@ -74,5 +93,53 @@ describe('test minileague schema', function() {
 
         const minileagueRes = await Minileague.findOne({})
         minileagueRes.members.should.have.lengthOf(1)
+    })
+    it('should not join a minileague that doesn\'t exist', async function() {
+        const res = await this.graphQLServer.executeOperation({
+            query: `
+            mutation {
+                joinMinileague(leagueName: "Test Minileague") {
+                    _id
+                    name
+                    members {
+                        username
+                    }
+                }
+            }`
+        })
+        assert.isNull(res.data.joinMinileague)
+        res.errors.should.have.lengthOf(1)
+        res.errors[0].message.should.equal('Mini league not found')
+    })
+    it('should not join a minileague you\'re already in', async function() {
+        await Minileague.create({ name: 'Test Minileague' })
+
+        await this.graphQLServer.executeOperation({
+            query: `
+            mutation {
+                joinMinileague(leagueName: "Test Minileague") {
+                    _id
+                    name
+                    members {
+                        username
+                    }
+                }
+            }`
+        })
+        const res = await this.graphQLServer.executeOperation({
+            query: `
+            mutation {
+                joinMinileague(leagueName: "Test Minileague") {
+                    _id
+                    name
+                    members {
+                        username
+                    }
+                }
+            }`
+        })
+        assert.isNull(res.data.joinMinileague)
+        res.errors.should.have.lengthOf(1)
+        res.errors[0].message.should.equal('You are already a member of this mini league')
     })
 })

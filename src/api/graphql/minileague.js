@@ -56,14 +56,10 @@ exports.MinileagueMutation = {
       } catch (err) {
         throw new Error('Mini league already exists')
       }
-      if (created) {
-        await user.updateOne(
-          { _id: context.id },
-          { $addToSet: { minileagues: created._id } }
-        )
-      } else {
-        throw new Error('Mini league not created')
-      }
+      await user.updateOne(
+        { _id: context.id },
+        { $addToSet: { minileagues: created._id } }
+      )
       return created
     }
   }
