@@ -2,11 +2,8 @@ const Router = require('express')
 const auth = require('./routes/auth').auth
 const generic = require('./routes/generic').generic
 const jira = require('./routes/jira').jira
-const predictions = require('./routes/predictions').predictions
 const score = require('./routes/score').score
 const games = require('./routes/games').games
-const minileague = require('./routes/minileague').minileague
-const friends = require('./routes/friends').friends
 const bodyParser = require('body-parser')
 const passport = require('passport')
 const LocalStrategy = require('passport-local').Strategy
@@ -62,11 +59,8 @@ exports.routes = () => {
   auth(app)
   generic(app)
   jira(app)
-  predictions(app)
   score(app)
   games(app)
-  minileague(app)
-  friends(app)
 
   return app
 }
