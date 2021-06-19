@@ -12,7 +12,7 @@ describe('user', function() {
     })
 
     it("can be created", async function() {
-        await User.register(await new User({ username: 'other', email: 'solomonabrahams100@gmail.com' }), 'testpass')
+        await User.register(new User({ username: 'other', email: 'solomonabrahams100@gmail.com' }), 'testpass')
     })
     describe('that already exists', function() {
         it("can be read", async function() {

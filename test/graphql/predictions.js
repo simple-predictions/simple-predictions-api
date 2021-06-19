@@ -105,4 +105,58 @@ describe('test prediction schema', function() {
         queryRes.data.predictionMany[0].home_pred.should.equal(1)
         queryRes.data.predictionMany[0].away_pred.should.equal(0)
     })
+    it('shouldn\'t return other user\'s future predictions', async function() {
+        const match = await Match.create({ home_team: 'Team 1', away_team: 'Team 2', kick_off_time: new Date(Date.now() + 604800000) })
+        const user = await User.register(new User({ username: 'other', email: 'other@gmail.com' }), 'testpass')
+        const pred = await Prediction.create({ match: match._id, author: user._id, home_pred: 1, away_pred: 0 })
+        await Match.updateOne({}, {predictions: pred._id})
+
+        const queryRes = await this.graphQLServer.executeOperation({
+            query: `
+            query {
+                matchOne {
+                    home_team
+                    away_team
+                    predictions {
+                        home_pred
+                        away_pred
+                    }
+                }
+            }
+            `
+        })
+
+        queryRes.data.matchOne.home_team.should.equal('Team 1')
+        queryRes.data.matchOne.away_team.should.equal('Team 2')
+
+        queryRes.data.matchOne.predictions.should.have.lengthOf(0)
+    })
+    it('should return other user\'s past predictions', async function() {
+        const match = await Match.create({ home_team: 'Team 1', away_team: 'Team 2', kick_off_time: new Date(Date.now() - 604800000) })
+        const user = await User.register(new User({ username: 'other', email: 'other@gmail.com' }), 'testpass')
+        const pred = await Prediction.create({ match: match._id, author: user._id, home_pred: 1, away_pred: 0 })
+        await Match.updateOne({}, {predictions: pred._id})
+
+        const queryRes = await this.graphQLServer.executeOperation({
+            query: `
+            query {
+                matchOne {
+                    home_team
+                    away_team
+                    predictions {
+                        home_pred
+                        away_pred
+                    }
+                }
+            }
+            `
+        })
+
+        queryRes.data.matchOne.home_team.should.equal('Team 1')
+        queryRes.data.matchOne.away_team.should.equal('Team 2')
+
+        queryRes.data.matchOne.predictions.should.have.lengthOf(1)
+        queryRes.data.matchOne.predictions[0].home_pred.should.equal(1)
+        queryRes.data.matchOne.predictions[0].away_pred.should.equal(0)
+    })
 })

@@ -3,13 +3,7 @@ const { prediction, match, user } = require('../../models/user')
 const { getGameweek } = require('../../services/predictions')
 
 const cleanPredictionObject = async (pred, rp) => {
-  const { kick_off_time: kickOffTime, gameweek } = (await match.findOne({ _id: pred.match })).toObject()
-
-  if (rp.args.gameweek) {
-    if (rp.args.gameweek !== gameweek) {
-      return
-    }
-  }
+  const { kick_off_time: kickOffTime } = (await match.findOne({ _id: pred.match })).toObject()
 
   if (pred.author.toString() !== rp.context.id && new Date(kickOffTime) > Date.now()) {
     pred.home_pred = undefined
@@ -24,7 +18,7 @@ const predictionFindOneWrap = async (next, rp) => {
   rp.projection.match = true
   const res = await next(rp)
 
-  const pred = cleanPredictionObject(res, rp)
+  const pred = await cleanPredictionObject(res, rp)
 
   return pred
 }
