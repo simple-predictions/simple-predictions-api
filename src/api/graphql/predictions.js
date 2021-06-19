@@ -1,6 +1,5 @@
 const { PredictionTC } = require('../../models/user.js')
 const { prediction, match, user } = require('../../models/user')
-const { getGameweek } = require('../../services/predictions')
 
 const cleanPredictionObject = async (pred, rp) => {
   const { kick_off_time: kickOffTime } = (await match.findOne({ _id: pred.match })).toObject()
@@ -29,9 +28,6 @@ const predictionFindManyWrap = async (next, rp) => {
   rp.projection.match = true
   const res = await next(rp)
   const preds = []
-  if (rp.args.gameweek === 0) {
-    rp.args.gameweek = await getGameweek()
-  }
 
   for (let i = 0; i < res.length; i++) {
     let pred = res[i]

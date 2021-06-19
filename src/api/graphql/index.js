@@ -48,7 +48,7 @@ UserTC.addRelation(
 UserTC.addRelation(
   'predictions',
   {
-    resolver: PredictionQuery.predictionDataLoader.addArgs({ gameweek: 'Int' }),
+    resolver: PredictionQuery.predictionDataLoader,
     prepareArgs: {
       _ids: source => source.predictions || []
     },
