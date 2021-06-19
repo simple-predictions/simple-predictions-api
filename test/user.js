@@ -3,8 +3,6 @@
 const User = require('../src/models/user').user
 
 const { resetPassword, createNewPassword, getUserInfo, auth_user } = require('../src/services/auth');
-const { addFriend, listFriends } = require('../src/services/friends')
-const { expect } = require('chai');
 
 describe('user', function() {
     it("can login", async function() {
@@ -27,29 +25,6 @@ describe('user', function() {
         })
         it("cannot reset password with incorrect verification token", function() {
             return createNewPassword('sol', 'incorrecttoken', 'newpassword').should.eventually.be.rejectedWith("Verification token doesn't match")
-        })
-
-        describe("can handle friends", function() {
-            beforeEach(async () => {
-                await User.register(new User({ username: 'friend1', email: 'friend@gmail.com' }), 'testpass')
-            })
-            it("can add friends", async function() {
-                await addFriend('sol', 'friend1')
-            })
-            it("cannot add friends that don't exist", async function() {
-                await addFriend('sol', 'fakefriend').should.be.rejectedWith('Username not found')
-            })
-            it("cannot add friends twice", async function() {
-                await addFriend('sol', 'friend1')
-                await addFriend('sol', 'friend1').should.be.rejectedWith('You are already following friend1')
-            })
-            it("can list friends when added", async function() {
-                await addFriend('sol', 'friend1')
-                await listFriends('sol').should.eventually.have.lengthOf.above(1)
-            })
-            it("cannot list friends when not added", async function() {
-                await listFriends('sol').should.eventually.have.lengthOf(1)
-            })
         })
     })
     describe('that does not exist', function() {
