@@ -1,4 +1,4 @@
-const { UserTC, prediction } = require('../../models/user.js')
+const { UserTC, prediction, user } = require('../../models/user.js')
 
 const modifyUserObject = (user, rp) => {
   if (rp.context.username !== user.username) {
@@ -63,5 +63,21 @@ exports.UserMutation = {
       return null
     }
     return next(rp)
-  })
+  }),
+  addFriend: {
+    type: UserTC,
+    args: { friendUsername: 'String!' },
+    resolve: async (source, args, context, info) => {
+      const friend = await user.findOne({ username: args.friendUsername })
+      if (!friend) {
+        throw new Error("User doesn't exist")
+      }
+      const res = await user.updateOne({ _id: context.id }, { $addToSet: { friends: friend._id } })
+      if (res.nModified === 0) {
+        throw new Error('You are already friends')
+      }
+      const resUser = await user.findOne({ _id: context.id })
+      return resUser
+    }
+  }
 }

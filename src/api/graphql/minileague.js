@@ -24,20 +24,23 @@ exports.MinileagueQuery = {
 exports.MinileagueMutation = {
   joinMinileague: {
     type: MinileagueTC,
-    args: { leagueID: 'String!' },
+    args: { leagueName: 'String!' },
     resolve: async (source, args, context, info) => {
-      const updated = await minileague.update(
-        { _id: args.leagueID },
+      const res = await minileague.updateOne(
+        { name: args.leagueName },
         { $addToSet: { members: context.id } }
       )
-      if (updated) {
-        await user.updateOne(
-          { _id: context.id },
-          { $addToSet: { minileagues: updated._id } }
-        )
-      } else {
-        throw new Error('Mini league with ID ' + args.leagueID + ' not updated with value ' + args.valueToPush)
+      if (res.n === 0) {
+        throw new Error('Mini league not found')
       }
+      if (res.nModified === 0) {
+        throw new Error('You are already a member of this mini league')
+      }
+      const updated = await minileague.findOne({ name: args.leagueName })
+      await user.updateOne(
+        { _id: context.id },
+        { $addToSet: { minileagues: updated._id } }
+      )
       return updated
     }
   },
@@ -45,9 +48,14 @@ exports.MinileagueMutation = {
     type: MinileagueTC,
     args: { leagueName: 'String!' },
     resolve: async (source, args, context, info) => {
-      const created = await minileague.create(
-        { name: args.leagueName, members: [context.id] }
-      )
+      let created
+      try {
+        created = await minileague.create(
+          { name: args.leagueName, members: [context.id] }
+        )
+      } catch (err) {
+        throw new Error('Mini league already exists')
+      }
       if (created) {
         await user.updateOne(
           { _id: context.id },
