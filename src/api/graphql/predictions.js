@@ -70,7 +70,7 @@ exports.PredictionQuery = {
 exports.PredictionMutation = {
   updatePrediction: {
     type: PredictionTC,
-    args: { matchID: 'String!', home_pred: 'Int', away_pred: 'Int', banker: 'Boolean', insurance: 'Boolean' },
+    args: { matchID: 'String!', home_pred: 'Int!', away_pred: 'Int!', banker: 'Boolean', insurance: 'Boolean' },
     resolve: async (source, args, context, info) => {
       // eslint-disable-next-line camelcase
       const { kick_off_time, gameweek } = (await match.findOne({ _id: args.matchID }).select('kick_off_time gameweek -_id'))
