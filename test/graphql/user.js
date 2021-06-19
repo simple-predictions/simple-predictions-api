@@ -3,7 +3,6 @@
 const schema = require('../../src/api/graphql/index')
 const { assert } = require('chai')
 const { user: User, match: Match } = require('../../src/models/user')
-const { updatePrediction } = require('../../src/services/predictions')
 const { updateDBScoresFootballData } = require('../../src/services/scoring')
 
 describe('test user schema', function() {
@@ -39,7 +38,15 @@ describe('test user schema', function() {
     })
     it("should return a user's total points", async function() {
         const { _id: id } = await Match.create({home_team: 'Arsenal', away_team: 'Tottenham'})
-        await updatePrediction('sol', 1, 0, id, false, false)
+        await this.graphQLServer.executeOperation({
+            query: `
+            mutation {
+                updatePrediction(matchID: "${id}", home_pred: 1, away_pred: 0) {
+                    home_pred
+                    away_pred
+                }
+            }`
+        })
         const data = {
             matches: [
                 {
