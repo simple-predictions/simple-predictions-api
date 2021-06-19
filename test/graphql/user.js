@@ -82,4 +82,75 @@ describe('test user schema', function() {
         res.data.userOne.email.should.equal('solomonabrahams100@gmail.com')
         res.data.userOne.totalPoints.should.equal(-10)
     })
+    describe("test friend schema", function() {
+        it("should add friend", async function() {
+            const friend = await User.register(new User({ username: 'other', email: 'other@gmail.com' }), 'testpass')
+
+            const queryRes = await this.graphQLServer.executeOperation({
+                query: `
+                mutation {
+                    addFriend(friendUsername: "other") {
+                        username
+                        friends {
+                            username
+                        }
+                    }
+                }`
+            })
+
+            queryRes.data.addFriend.username.should.equal("sol")
+            queryRes.data.addFriend.friends.should.have.lengthOf(1)
+            queryRes.data.addFriend.friends[0].username.should.equal("other")
+
+            const user = await User.findOne({ username: 'sol' })
+            user.friends.should.have.lengthOf(1)
+            user.friends[0].toString().should.equal(friend._id.toString())
+        })
+        it("shouldn't add friends twice", async function() {
+            const friend = await User.register(new User({ username: 'other', email: 'other@gmail.com' }), 'testpass')
+            await this.graphQLServer.executeOperation({
+                query: `
+                mutation {
+                    addFriend(friendUsername: "other") {
+                        username
+                        friends {
+                            username
+                        }
+                    }
+                }`
+            })
+            const queryRes = await this.graphQLServer.executeOperation({
+                query: `
+                mutation {
+                    addFriend(friendUsername: "other") {
+                        username
+                        friends {
+                            username
+                        }
+                    }
+                }`
+            })
+
+            assert.isNull(queryRes.data.addFriend)
+            queryRes.errors.should.have.lengthOf(1)
+            queryRes.errors[0].message.should.equal("You are already friends")
+        })
+        it("shouldn't add friends that don't exist", async function() {
+            const queryRes = await this.graphQLServer.executeOperation({
+                query: `
+                mutation {
+                    addFriend(friendUsername: "other") {
+                        username
+                        friends {
+                            username
+                        }
+                    }
+                }`
+            })
+
+            assert.isNull(queryRes.data.addFriend)
+            queryRes.errors.should.have.lengthOf(1)
+            queryRes.errors[0].message.should.equal("User doesn't exist")
+        })
+    })
 })
