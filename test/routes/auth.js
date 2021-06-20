@@ -47,7 +47,7 @@ describe("auth tests", function() {
         res2.status.should.equal(200)
         assert.isNotNull(res2.header['set-cookie'][0])
     })
-    it("shouldn't get user info", async function() {
+    it("should get user info", async function() {
         const agent = request.agent(this.server)
 
         const res = await agent.post('/login').send({username: 'sol', password: 'testpass'})
@@ -57,5 +57,18 @@ describe("auth tests", function() {
         res1.status.should.equal(200)
         res1.body.username.should.equal('sol')
         res1.body.email.should.equal('solomonabrahams100@gmail.com')
+    })
+    it("shouldn't get user info", async function() {
+        const res = await request(this.server).get('/userinfo')
+        res.status.should.equal(401)
+    })
+    it("shouldn't reset a password without all params", async function() {
+        const res = await request(this.server).post('/resetpassword').send()
+        res.status.should.equal(500)
+        res.error.text.should.equal("\"Not all parameters were provided.\"")
+
+        const res1 = await request(this.server).post('/createnewpassword').send()
+        res1.status.should.equal(500)
+        res1.error.text.should.equal("\"Not all parameters were provided\"")
     })
 })
