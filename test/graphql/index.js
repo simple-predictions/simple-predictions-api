@@ -2,7 +2,6 @@
 const { ApolloServer } = require('apollo-server-express')
 const schema = require('../../src/api/graphql/index')
 const User = require('../../src/models/user').user
-const { routes } = require('../../src/api/index')
 
 before(function() {
     const server = new ApolloServer({
@@ -14,10 +13,4 @@ before(function() {
         }
     })
     this.graphQLServer = server
-})
-
-describe('test router', function() {
-    it('setup', async function() {
-        await routes()
-    })
 })

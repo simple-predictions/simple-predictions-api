@@ -61,9 +61,3 @@ after(function () {
 afterEach(() => clearDatabase());
 
 after(async () => await disconnnect());
-
-describe("Get all users", function() {
-    it("should return user info", function(done) {
-        done()
-    })
-})
