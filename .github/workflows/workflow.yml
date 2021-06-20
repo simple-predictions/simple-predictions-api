@@ -42,6 +42,7 @@ jobs:
         TWIT_ACCESS_TOKEN_SECRET: ${{ secrets.TWIT_ACCESS_TOKEN_SECRET }}
         TWIT_CONSUMER_SECRET: ${{ secrets.TWIT_CONSUMER_SECRET }}
         FOOTBALL_DATA_API_AUTH: ${{ secrets.FOOTBALL_DATA_API_AUTH }}
+        SESSION_SECRET: "tekjskjdiqoexm"
     - name: Generate code coverage
       run: npm run coverage
     - name: Upload code coverage to codecov
