@@ -54,7 +54,6 @@ describe("auth tests", function() {
         assert.isNotNull(res.header['set-cookie'][0])
 
         const res1 = await agent.get('/userinfo')
-        console.info(res1.body)
         res1.status.should.equal(200)
         res1.body.username.should.equal('sol')
         res1.body.email.should.equal('solomonabrahams100@gmail.com')
