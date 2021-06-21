@@ -73,7 +73,7 @@ exports.PredictionMutation = {
         return
       }
 
-      if (!(args.home_pred && args.away_pred)) {
+      if (!((args.home_pred || args.home_pred === 0) && (args.away_pred || args.away_pred === 0))) {
         return
       }
 
